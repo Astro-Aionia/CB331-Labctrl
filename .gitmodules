@@ -1,0 +1,3 @@
+[submodule "servers/toupcam"]
+	path = servers/toupcam
+	url = https://github.com/Astro-Aionia/toupcam.git
