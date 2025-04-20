@@ -9,8 +9,8 @@ class ServerTestWindow(QMainWindow, Ui_MainWindow):
         QMainWindow.__init__(self, parent=parent)
         self.setupUi(self)
         self.pushButton.clicked.connect(lambda: self.get())
-        self.lineEdit.setText('50002')
-        self.lineEdit_2.setText('/set/SIG/1400')
+        self.lineEdit.setText('50006')
+        self.lineEdit_2.setText('/acquire/C:\\Users\\zhenggroup\\Desktop\\New')
 
     def get(self):
         try:
