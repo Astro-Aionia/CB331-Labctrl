@@ -35,7 +35,7 @@ def moveabs(pos):
     stage.moveabs(pos)
     res = dict()
     res['success'] = True
-    res['message'] = "Moved to target position"
+    res['message'] = f"Moved to target position {pos} mm"
     res['name'] = 'CDHD2'
     res['position'] = stage.position
     res['velocity'] = stage.velocity
@@ -45,10 +45,10 @@ def moveabs(pos):
 @app.route("/moveinc/<dis>")
 def moveinc(dis):
     dis = float(dis)
-    stage.moveabs(dis)
+    stage.moveinc(dis)
     res = dict()
     res['success'] = True
-    res['message'] = "Moved by target distance"
+    res['message'] = f"Moved by target distance {dis} mm"
     res['name'] = 'CDHD2'
     res['position'] = stage.position
     res['velocity'] = stage.velocity

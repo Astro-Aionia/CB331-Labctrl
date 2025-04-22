@@ -40,3 +40,8 @@ By default, assigned ports start from `50001`.
 
         ToupCam     50006
         PI EMCCD    50007
+
+
+* Lock-in:
+
+        UHF         50008
