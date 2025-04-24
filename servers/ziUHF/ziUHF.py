@@ -21,7 +21,7 @@ cfg = {
     # "ServerHost": "192.168.1.149",
     "ServerPort": 8004,
     # "SamplePath": "/dev2461/boxcars/0/sample"
-    "SamplePath": "/dev20014/boxcars/0/sample",
+    "SamplePath": "/dev20014/auxouts/0/value",
     # "BackgroundSamplePath": "/dev2819/boxcars/1/sample"
 }
 

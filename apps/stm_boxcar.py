@@ -50,32 +50,38 @@ class STMBoxcarExperiment(Ui_STMBoxcar, QMainWindow):
         # functions
         self.lineEdit.setText("..\\delaylist\\delay.txt")
         self.lineEdit_2.setText("delay.csv")
+        self.lineEdit_3.setText("0")
+        self.lineEdit_3.setReadOnly(True)
+        self.lineEdit_4.setText("1")
         self.pushButton.clicked.connect(lambda : self.scan())
 
     def scan(self):
         delaylistfile = self.lineEdit.text()
+        round = int(self.lineEdit_4.text())
         # print(delaylistfile)
         save_path = "..\\acq_data\\"
         filename = self.lineEdit_2.text()
         # print(save_path)
         delaylist = np.loadtxt(delaylistfile)
-        self.x = []
-        self.y = []
-        for position in delaylist:
-            self.servo.lineEdit_4.setText(str(position))
-            self.servo.moveabs()
-            self.textEdit.append(self.servo.last_response["message"])
-            res = requests.get(self.boxcar_url + "/get_value")
-            rc = res.content.decode()
-            value = json.loads(rc)["value"]
-            # message = json.loads(rc)["message"]
-            self.textEdit.append(f"get data at position {position} mm.")
-            self.x.append(position)
-            self.y.append(value)
-            self.update_plot()
-            QApplication.processEvents()
-        np.savetxt(save_path+filename, np.vstack((self.x, self.y)).T, delimiter=',')
-        self.textEdit.append("File saved at "+save_path+filename+'.')
+        for i in range(round):
+            self.lineEdit_3.setText(str(i))
+            self.x = []
+            self.y = []
+            for position in delaylist:
+                self.servo.lineEdit_4.setText(str(position))
+                self.servo.moveabs()
+                self.textEdit.append(self.servo.last_response["message"])
+                res = requests.get(self.boxcar_url + "/get_value")
+                rc = res.content.decode()
+                value = json.loads(rc)["value"]
+                # message = json.loads(rc)["message"]
+                self.textEdit.append(f"get data at position {position} mm.")
+                self.x.append(position)
+                self.y.append(value)
+                self.update_plot()
+                QApplication.processEvents()
+            np.savetxt(save_path+filename+"Round"+str(i).zfill(5)+".csv", np.vstack((self.x, self.y)).T, delimiter=',')
+            self.textEdit.append("File saved at "+save_path+filename+'.')
 
     def update_plot(self):
         self.scan_window.ax.clear()
