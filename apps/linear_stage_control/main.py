@@ -1,5 +1,4 @@
 import sys
-# sys.path.append("..\..")
 
 from PyQt6.QtWidgets import QApplication, QMainWindow
 from PyQt6 import QtWidgets
@@ -7,8 +6,8 @@ from PyQt6 import QtWidgets
 from labctrl.labconfig import LabConfig, lcfg
 from labctrl.labstat import LabStat, lstat
 
-from apps.linear_stage_control.ui.linear_stage_control import Ui_LinearStageControlExperiment
-from labctrl.components.servo.factory import FactoryServoStage
+from .ui.linear_stage_control import Ui_LinearStageControlExperiment
+from labctrl.components.linear_stages.servo.factory import FactoryServoStage
 
 app_name = "linear_stage_control"
 app_config: dict = lcfg.config["apps"][app_name]
@@ -24,7 +23,7 @@ class LinearStageControlExperiment(QMainWindow, Ui_LinearStageControlExperiment)
         factory = FactoryServoStage(lcfg, lstat)
         delayline_bundle_config = {
             "BundleType": "PyQt6",
-            "Config": lcfg.config[delay_stage_name]
+            "Config": lcfg.config["linear_stages"][delay_stage_name]
         }
         self.linear_stage = factory.generate_bundle(delayline_bundle_config)
 

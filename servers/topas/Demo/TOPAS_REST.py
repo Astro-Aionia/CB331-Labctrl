@@ -30,11 +30,12 @@ class Topas4Controller:
     def get(self, url):
         return requests.get(self.baseAddress + url)
     
-    def changeShutter(self):
+    def changeShutter(self) -> bool:
         isShutterOpen = self.get('/ShutterInterlock/IsShutterOpen').json()
-        line = input(r"Do you want to " + ("close" if isShutterOpen  else "open") + r" shutter? (Y\N)").upper()
-        if line == "Y" or line == "YES":
-           self.put('/ShutterInterlock/OpenCloseShutter', not isShutterOpen)
+        # line = input(r"Do you want to " + ("close" if isShutterOpen  else "open") + r" shutter? (Y\N)").upper()
+        # if line == "Y" or line == "YES":
+        self.put('/ShutterInterlock/OpenCloseShutter', not isShutterOpen)
+        return isShutterOpen
 
     def getCalibrationInfo(self):
         self.interactions = self.get('/Optical/WavelengthControl/ExpandedInteractions').json()
@@ -44,7 +45,7 @@ class Topas4Controller:
         if len(self.interactions) == 0:
             print("No interaction")
 
-    def setWavelength(self, interaction, wavelength):
+    def setWavelength(self, interaction, wavelength) -> bool:
         print("Setting wavelength to {wv} with interaction {interaction}".format(wv=wavelength, interaction=interaction['Type']))
         if interaction['OutputRange']['From'] < wavelength < interaction['OutputRange']['To']:
             response = self.put('/Optical/WavelengthControl/SetWavelength', {'Interaction':interaction['Type'], 'Wavelength':wavelength})
@@ -52,8 +53,10 @@ class Topas4Controller:
             print("Wavelength set, response:", response)
             self.interaction = interaction['Type']
             self.wavelength = wavelength
+            return True
         else:
             print("Wavelength out of range.")
+            return False
 
     def waitTillWavelengthIsSet(self):
        """

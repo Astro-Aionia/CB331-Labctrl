@@ -1,0 +1,7 @@
+{
+    "Name": "PI EMCCD",
+    "Comment": "PI EMCCD and 750 HR-Spectrometer",
+    "Host": "127.0.0.1",
+    "Port": 50007,
+    "Experiment": "test"
+}

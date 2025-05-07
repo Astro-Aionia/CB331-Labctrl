@@ -63,6 +63,7 @@ class LabConfig(metaclass=Singleton):
             for file in files:
                 if file.endswith('.json'):
                     filepath = root + '/' + file
+                    # print(filepath)
                     cfgname = file[:-5]
                     with open(filepath, 'r') as f:
                         cfg[cfgname] = json.load(f)

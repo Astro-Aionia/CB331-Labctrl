@@ -27,7 +27,7 @@ class LightFieldController():
     def __init__(self, experiment: str = None, interface=True):
         self.auto = None
         self.experiment = None
-        self.count = 0
+        # self.count = 0
         try:
             self.auto = Automation(interface, List[String]())
             self.experiment = self.auto.LightFieldApplication.Experiment
@@ -51,10 +51,9 @@ class LightFieldController():
     def get_dir(self):
         return self.experiment.GetValue(ExperimentSettings.FileNameGenerationDirectory)
 
-    def acquire(self, path=None, prefix='spe'):
+    def acquire(self, path=None, filename='spe'):
         if path == None:
             path = self.experiment.GetValue(ExperimentSettings.FileNameGenerationDirectory)
-        filename = prefix + str(self.count).zfill(5)
         self.experiment.SetValue(ExperimentSettings.FileNameGenerationDirectory, path)
         self.experiment.SetValue(ExperimentSettings.FileNameGenerationBaseFileName, filename)
         self.experiment.SetValue(ExperimentSettings.FileNameGenerationAttachIncrement, False)
@@ -67,7 +66,7 @@ class LightFieldController():
             if self.experiment.GetValue(ExperimentSettings.OnlineExportEnabled):
                 self.frame_avg(filename=filename)
             print("Image {num} saved to {path}".format(num=filename, path=self.savedir))
-            self.count = self.count + 1
+            # self.count = self.count + 1
         else:
             print("Devices is not ready.")
 
@@ -91,10 +90,10 @@ class LightFieldController():
         np.savetxt(self.get_dir() + '\\' + filename + '.csv', data, delimiter=',')
         return data
 
-    def clean(self):
-        self.count = 0
-        self.experiment.SetValue(ExperimentSettings.FileNameGenerationBaseFileName, '')
-        print("Acquisition number reset to 0.")
+    # def clean(self):
+    #     self.count = 0
+    #     self.experiment.SetValue(ExperimentSettings.FileNameGenerationBaseFileName, '')
+    #     print("Acquisition number reset to 0.")
 
 
 class LightFieldEmulator():

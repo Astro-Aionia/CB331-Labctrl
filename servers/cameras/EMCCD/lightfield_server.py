@@ -27,23 +27,24 @@ def close():
     res = json.dumps(res)
     return Response(res, status=200, mimetype='application/json')
 
-@app.route("/clean_count")
-def clean_count():
-    emccd.clean()
-    res = dict()
-    res['success'] = True
-    res['message'] = "Acquisition count reset to 0"
-    res = json.dumps(res)
-    return Response(res, status=200, mimetype='application/json')
+# @app.route("/clean_count")
+# def clean_count():
+#     emccd.clean()
+#     res = dict()
+#     res['success'] = True
+#     res['message'] = "Acquisition count reset to 0"
+#     res = json.dumps(res)
+#     return Response(res, status=200, mimetype='application/json')
 
-@app.route("/acquire/<prefix>")
-def acquire(prefix):
-    prefix = str(prefix)
-    emccd.acquire(prefix=prefix)
+@app.route("/acquire/<filename>")
+def acquire(filename):
+    filename = str(filename)
+    emccd.acquire(filename=filename)
     res = dict()
     res['success'] = True
-    res['message'] = f"A spectrum saved to {emccd.savedir} with prefix {prefix}"
+    res['message'] = f"Spectrum {filename} saved to {emccd.savedir}."
     res['save_path'] = emccd.savedir
-    res['acq_number'] = emccd.count - 1
+    res['filename'] = filename
+    # res['acq_number'] = emccd.count - 1
     res = json.dumps(res)
     return Response(res, status=200, mimetype='application/json')

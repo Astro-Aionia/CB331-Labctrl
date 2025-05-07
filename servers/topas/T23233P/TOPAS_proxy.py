@@ -2,7 +2,7 @@ import json
 from flask import Flask, Response
 from TOPAS_REST import Topas4Controller
 
-sn = "T23231P-Demo-7069"
+sn = "T23233P"
 
 print("Connecting to TOPAS server " + sn)
 topas = Topas4Controller(sn)
@@ -33,7 +33,21 @@ def set_wavelength(interaction, wavelength):
     topas.setWavelength(topas.interactions[interaction_num], wavelength)
     res = dict()
     res['success'] = True
-    res['message'] = "Wavelength set to target"
+    res['message'] = f"Wavelength set to ({interaction}) {wavelength} nm"
+    res['interaction'] = topas.interaction
+    res['wavelength'] = topas.wavelength
+    res = json.dumps(res)
+    return Response(res, status=200, mimetype='application/json')
+
+@app.route("/shutter")
+def change_shutter():
+    status = topas.changeShutter()
+    res = dict()
+    res['success'] = True
+    if status:
+        res['message'] = "Shutter is closed."
+    else:
+        res['message'] = "Shutter is open."
     res['interaction'] = topas.interaction
     res['wavelength'] = topas.wavelength
     res = json.dumps(res)

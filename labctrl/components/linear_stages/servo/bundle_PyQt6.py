@@ -50,7 +50,7 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
         self.filedialog.lineEdit.setText(self.config["LoadedExternalScanList"])
 
         @update_config
-        def __set_velocity(*args, **kwargs):
+        def __set_velocity():
             config["DrivingSpeed"] = float(self.lineEdit_2.text())
             response = self.remote.set_velocity(config["DrivingSpeed"])
             self.lstat.fmtmsg(response)

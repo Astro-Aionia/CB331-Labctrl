@@ -30,11 +30,12 @@ class Topas4Controller:
     def get(self, url):
         return requests.get(self.baseAddress + url)
     
-    def changeShutter(self):
+    def changeShutter(self) -> bool:
         isShutterOpen = self.get('/ShutterInterlock/IsShutterOpen').json()
-        line = input(r"Do you want to " + ("close" if isShutterOpen  else "open") + r" shutter? (Y\N)").upper()
-        if line == "Y" or line == "YES":
-           self.put('/ShutterInterlock/OpenCloseShutter', not isShutterOpen)
+        # line = input(r"Do you want to " + ("close" if isShutterOpen  else "open") + r" shutter? (Y\N)").upper()
+        # if line == "Y" or line == "YES":
+        self.put('/ShutterInterlock/OpenCloseShutter', not isShutterOpen)
+        return isShutterOpen
 
     def getCalibrationInfo(self):
         self.interactions = self.get('/Optical/WavelengthControl/ExpandedInteractions').json()

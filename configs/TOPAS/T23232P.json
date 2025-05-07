@@ -1,0 +1,15 @@
+{
+    "Name": "T23232P",
+    "Comment": "The ps TOPAS with static optical path.",
+    "Host": "127.0.0.1",
+    "Port": "50004",
+    "WorkingUnit": "nm",
+    "ScanMode": "Range",
+    "RangeScanStart": 3500.0,
+    "RangeScanStop": 5000.0,
+    "RangeScanStep": 500.0,
+    "LoadedExternalScanList": [3500.0, 4000.0, 4500.0, 5000.0],
+    "ManualUnit": "nm",
+    "ManualTarget": 1300.0,
+    "ManualStep": 1.0
+}

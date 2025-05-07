@@ -7,6 +7,6 @@
 # mainWindow.show()
 # sys.exit(app.exec())
 
-from apps.linear_stage_control.main import app_run
+from apps.SFG.main import app_run
 
 app_run()
