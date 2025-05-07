@@ -4,7 +4,7 @@ from labctrl.labstat import LabStat
 from .remote import RemoteServoStage
 
 from PyQt6 import QtWidgets
-from PyQt6.QtWidgets import QApplication, QWidget
+from PyQt6.QtWidgets import QWidget
 from .bundle_widget import Ui_ServoStage
 from labctrl.widgets.file_dialog import FileSelect
 

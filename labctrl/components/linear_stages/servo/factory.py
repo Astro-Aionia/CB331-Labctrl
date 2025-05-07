@@ -1,7 +1,7 @@
 from labctrl.labstat import LabStat
 from labctrl.labconfig import LabConfig
 
-from .bundle_pyqt6 import BundlePyQt6ServoStage
+from .bundle_PyQt6 import BundlePyQt6ServoStage
 
 class FactoryServoStage:
     """
