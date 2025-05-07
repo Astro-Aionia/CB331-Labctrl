@@ -22,7 +22,7 @@ def set_velocity(vel):
     stage.set_velocity(vel)
     res = dict()
     res['success'] = True
-    res['message'] = "Velocity set"
+    res['message'] = f"Velocity set to {vel}"
     res['name'] = 'CDHD2'
     res['position'] = stage.position
     res['velocity'] = stage.velocity

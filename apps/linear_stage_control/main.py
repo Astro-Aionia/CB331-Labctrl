@@ -1,0 +1,40 @@
+import sys
+# sys.path.append("..\..")
+
+from PyQt6.QtWidgets import QApplication, QMainWindow
+from PyQt6 import QtWidgets
+
+from labctrl.labconfig import LabConfig, lcfg
+from labctrl.labstat import LabStat, lstat
+
+from apps.linear_stage_control.ui.linear_stage_control import Ui_LinearStageControlExperiment
+from labctrl.components.servo.factory import FactoryServoStage
+
+app_name = "linear_stage_control"
+app_config: dict = lcfg.config["apps"][app_name]
+delay_stage_name = app_config["DelayLine"]
+
+class LinearStageControlExperiment(QMainWindow, Ui_LinearStageControlExperiment):
+    def __init__(self,lcfg: LabConfig, lstat: LabStat, parent=None):
+        QMainWindow.__init__(self)
+        self.setupUi(self)
+
+        # add devices and functions
+        # self.lstat = lstat
+        factory = FactoryServoStage(lcfg, lstat)
+        delayline_bundle_config = {
+            "BundleType": "PyQt6",
+            "Config": lcfg.config[delay_stage_name]
+        }
+        self.linear_stage = factory.generate_bundle(delayline_bundle_config)
+
+        # setup UI
+        ui_layout = QtWidgets.QHBoxLayout(self.centralwidget)
+        ui_layout.addWidget(self.linear_stage)
+        ui_layout.addWidget(lstat.widget)
+
+def app_run():
+    app = QApplication(sys.argv)
+    mainWindow = LinearStageControlExperiment(lcfg=lcfg, lstat=lstat)
+    mainWindow.show()
+    sys.exit(app.exec())

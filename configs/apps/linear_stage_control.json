@@ -1,0 +1,5 @@
+{
+    "Name": "Linear Stage Control",
+    "Comment": "Simply move the stage without any additional operation",
+    "DelayLine": "servo"
+}

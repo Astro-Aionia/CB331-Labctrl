@@ -4,11 +4,11 @@ import requests
 
 from setuptools.sandbox import save_path
 
-sys.path.append('..')
+sys.path.append('../..')
 
 from PyQt6 import QtWidgets
 from PyQt6.QtWidgets import QApplication, QMainWindow
-from apps.ui.stm_boxcar import Ui_STMBoxcar
+from apps.stm_boxcar.ui.stm_boxcar import Ui_STMBoxcar
 
 from widgets.servo_manual_control import ServoManualControlWidget
 
@@ -59,7 +59,7 @@ class STMBoxcarExperiment(Ui_STMBoxcar, QMainWindow):
         delaylistfile = self.lineEdit.text()
         round = int(self.lineEdit_4.text())
         # print(delaylistfile)
-        save_path = "..\\acq_data\\"
+        save_path = "../../acq_data\\"
         filename = self.lineEdit_2.text()
         # print(save_path)
         delaylist = np.loadtxt(delaylistfile)

@@ -2,7 +2,7 @@ import sys
 import json
 import requests
 from PyQt6.QtWidgets import QWidget, QApplication
-from widgets.ui.servo import Ui_ServoStage
+from .ui.servo import Ui_ServoStage
 
 class ServoManualControlWidget(QWidget, Ui_ServoStage):
     def __init__(self, parent=None):
