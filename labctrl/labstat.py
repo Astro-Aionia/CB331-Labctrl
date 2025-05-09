@@ -1,21 +1,13 @@
-import sys
-
 from .singleton import Singleton
 from datetime import datetime
 import json
 
-from PyQt6.QtWidgets import QWidget, QApplication
-from .experiment_message import Ui_ExperimentMessage
+from PyQt6.QtCore import pyqtSignal, QObject
 
-class ExperimentMessageWidget(QWidget, Ui_ExperimentMessage):
+class ExperimentMessageObject(QObject):
+    update = pyqtSignal(str)
     def __init__(self, parent=None):
-        QWidget.__init__(self, parent=parent)
-        self.setupUi(self)
-        self.textEdit.setReadOnly(True)
-
-    def setText(self, text):
-        self.textEdit.setText(text)
-        self.textEdit.verticalScrollBar().setValue(self.textEdit.verticalScrollBar().maximum())
+        QObject.__init__(self, parent=parent)
 
 class LabStat(metaclass=Singleton):
     """
@@ -27,7 +19,8 @@ class LabStat(metaclass=Singleton):
     def __init__(self) -> None:
         self.msg_list = list()
         self.stat = dict()
-        self.widget = ExperimentMessageWidget()
+        self.object = ExperimentMessageObject()
+        self.message = ''
 
         # save front end panel pages so that different threads see the same doc
         self.root_names = ["dashboard", "setup",
@@ -51,9 +44,8 @@ class LabStat(metaclass=Singleton):
             #     self.msg_list.append(i)
         while len(self.msg_list) > 40:
             self.msg_list.pop(0)
-        text = '\n'.join(self.msg_list)
-        self.update_exp_msg(text)
-        QApplication.processEvents()
+        self.message = '\n'.join(self.msg_list)
+        self.object.update.emit(self.message)
 
     def fmtmsg(self, d: dict) -> None:
         """expmsg, but accepts a dict from json"""
@@ -78,9 +70,4 @@ class LabStat(metaclass=Singleton):
 
         self.expmsg(msg_str)
 
-    def update_exp_msg(self, t):
-        self.widget.setText(t)
-
-lstatApp = QApplication(sys.argv)
 lstat = LabStat()
-# sys.exit(lstatApp.exec())

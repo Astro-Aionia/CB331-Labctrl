@@ -1,12 +1,10 @@
 import sys
 import time
-import numpy as np
 from threading import Thread
-from functools import wraps
+import numpy as np
 
 from PyQt6.QtWidgets import QApplication, QMainWindow
 from PyQt6 import QtWidgets
-from PyQt6.QtCore import QThread, QObject
 
 from labctrl.labconfig import LabConfig, lcfg
 from labctrl.labstat import LabStat, lstat
@@ -15,19 +13,13 @@ from .ui.SFG import Ui_SFGExperiment
 from labctrl.components.linear_stages.servo.factory import FactoryServoStage
 from labctrl.components.TOPAS.Demo.factory import FactoryTOPAS
 from labctrl.components.cameras.EMCCD.factory import FactoryEMCCD
+from labctrl.widgets.message_box import MessageWidget
 
 app_name = "SFG"
 app_config: dict = lcfg.config["apps"][app_name]
 delay_stage_name = app_config["DelayLine"]
 detector_name = app_config["Detector"]
 topas_name = app_config["TOPAS"]
-
-class Worker(QObject):
-    def __init__(self, func, parent = None):
-        super().__init__(parent=parent)
-        self.func = func
-    def run(self):
-        self.func()
 
 class SFGExpData:
     def __init__(self, lcfg, lstat):
@@ -74,8 +66,6 @@ class SFGExperiment(QMainWindow, Ui_SFGExperiment):
     def __init__(self,lcfg: LabConfig, lstat: LabStat, parent=None):
         QMainWindow.__init__(self)
         self.setupUi(self)
-        self.lcfg = lcfg
-        self.lstat = lstat
 
         # add devices and functions
         factory = FactoryServoStage(lcfg, lstat)
@@ -102,6 +92,8 @@ class SFGExperiment(QMainWindow, Ui_SFGExperiment):
         }
         self.detector = factory.generate_bundle(detector_bundle_config)
 
+        self.message_box = MessageWidget(lstat)
+
         self.data = SFGExpData(lcfg, lstat)
         self.flags = {
             "RUNNING": False,
@@ -114,7 +106,7 @@ class SFGExperiment(QMainWindow, Ui_SFGExperiment):
         b1 = QtWidgets.QGridLayout(self.StageWidget)
         b1.addWidget(self.linear_stage)
         b2 = QtWidgets.QGridLayout(self.MessageWidget)
-        b2.addWidget(lstat.widget)
+        b2.addWidget(self.message_box)
         b3 = QtWidgets.QGridLayout(self.DetectorWidget)
         b3.addWidget(self.detector)
         b3 = QtWidgets.QGridLayout(self.TOPASWidget)
@@ -175,7 +167,8 @@ class SFGExperiment(QMainWindow, Ui_SFGExperiment):
             self.flags["TERMINATE"] = False
             self.flags["FINISH"] = False
             self.flags["RUNNING"] = True
-            task()
+            thread = Thread(target=task)
+            thread.start()
 
         self.pushButton_1.clicked.connect(__start)
 
@@ -188,7 +181,7 @@ class SFGExperiment(QMainWindow, Ui_SFGExperiment):
         self.pushButton_2.clicked.connect(__stop)
 
 def app_run():
-    app = QApplication(sys.argv)
+    SFG = QApplication(sys.argv)
     mainWindow = SFGExperiment(lcfg=lcfg, lstat=lstat)
     mainWindow.show()
-    sys.exit(app.exec())
+    sys.exit(SFG.exec())
