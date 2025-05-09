@@ -48,3 +48,12 @@ def acquire(filename):
     # res['acq_number'] = emccd.count - 1
     res = json.dumps(res)
     return Response(res, status=200, mimetype='application/json')
+
+@app.route("/reset")
+def reset():
+    emccd.reset_increment()
+    res = dict()
+    res['success'] = True
+    res['message'] = f"Raw file start number reset to 0."
+    res = json.dumps(res)
+    return Response(res, status=200, mimetype='application/json')

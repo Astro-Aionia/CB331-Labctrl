@@ -29,6 +29,8 @@ class BundlePyQt6TOPAS(QWidget, Ui_TOPASDemo):
         self.lineEdit_3.setText(str(config["RangeScanStop"]))
         self.lineEdit_4.setText(str(config["RangeScanStep"]))
 
+        self.pushButton.clicked.connect(lambda : self.change_shutter())
+
         @update_config
         def __set_wavelength():
             interation = self.comboBox.currentText()
@@ -40,12 +42,6 @@ class BundlePyQt6TOPAS(QWidget, Ui_TOPASDemo):
 
         self.lineEdit_1.editingFinished.connect(__set_wavelength)
 
-        def __change_shutter(buttonStatus):
-            response = self.remote.change_shutter()
-            self.lstat.fmtmsg(response)
-
-        self.pushButton.clicked.connect(__change_shutter)
-
         def __set_scanlist():
             config["RangeScanStart"] = float(self.lineEdit_2.text())
             config["RangeScanStop"] = float(self.lineEdit_3.text())
@@ -55,6 +51,15 @@ class BundlePyQt6TOPAS(QWidget, Ui_TOPASDemo):
         self.lineEdit_2.editingFinished.connect(__set_scanlist)
         self.lineEdit_3.editingFinished.connect(__set_scanlist)
         self.lineEdit_4.editingFinished.connect(__set_scanlist)
+
+    def change_shutter(self):
+        name = self.name
+        if name not in self.lstat.stat:
+            self.lstat.stat[name] = dict()
+        response = self.remote.change_shutter()
+        self.lstat.fmtmsg(response)
+        self.lstat.stat[name]["ShutterIsOpen"] = response["shutterIsOpen"]
+        self.lstat.dump_stat("last_stat.json")
 
     def update_scanlist(self, config) -> list:
         name = config["Name"]

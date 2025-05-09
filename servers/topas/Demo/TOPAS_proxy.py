@@ -50,8 +50,10 @@ def change_shutter():
     res['success'] = True
     if status:
         res['message'] = "Shutter is closed."
+        res["shutterIsOpen"] = False
     else:
         res['message'] = "Shutter is open."
+        res["shutterIsOpen"] = True
     res['interaction'] = topas.interaction
     res['wavelength'] = topas.wavelength
     res = json.dumps(res)

@@ -1,6 +1,6 @@
 {
-    "Name": "Servo CDHD2",
-    "Comment": "The long delay line now for SFG and STM at CB331",
+    "Name": "servo",
+    "Comment": "The Servo CDHD2 linear stage as a long (4 ns) delay line now for SFG and STM at CB331",
     "Host": "127.0.0.1",
     "Port": 50001,
     "WorkingUnit": "mm",

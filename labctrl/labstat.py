@@ -15,6 +15,7 @@ class ExperimentMessageWidget(QWidget, Ui_ExperimentMessage):
 
     def setText(self, text):
         self.textEdit.setText(text)
+        self.textEdit.verticalScrollBar().setValue(self.textEdit.verticalScrollBar().maximum())
 
 class LabStat(metaclass=Singleton):
     """
@@ -40,17 +41,19 @@ class LabStat(metaclass=Singleton):
         """formats messages, then send it to front end via a callback"""
         # print(t)
         for i in t.split('\n'):
-            if len(i) < 80: # max 80 chars a line
-                self.msg_list.append(i)
-            else:
-                while len(i) >= 80:
-                    self.msg_list.append(i[0:80])
-                    i = i[80:]
-                self.msg_list.append(i)
+            self.msg_list.append(i)
+            # if len(i) < 80: # max 80 chars a line
+            #     self.msg_list.append(i)
+            # else:
+            #     while len(i) >= 80:
+            #         self.msg_list.append(i[0:80])
+            #         i = i[80:]
+            #     self.msg_list.append(i)
         while len(self.msg_list) > 40:
             self.msg_list.pop(0)
         text = '\n'.join(self.msg_list)
         self.update_exp_msg(text)
+        QApplication.processEvents()
 
     def fmtmsg(self, d: dict) -> None:
         """expmsg, but accepts a dict from json"""

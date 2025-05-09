@@ -44,5 +44,8 @@ class RemoteEMCCD():
     # def clean_count(self):
     #     return self.apicall('/clean_count')
 
+    def reset(self):
+        return self.apicall('/reset')
+
     def acquire(self, filename):
         return self.apicall('/acquire/{filename}'.format(filename=filename))

@@ -1,7 +1,9 @@
 {
-    "Name": "PI EMCCD",
+    "Name": "EMCCD",
     "Comment": "PI EMCCD and 750 HR-Spectrometer",
     "Host": "127.0.0.1",
     "Port": 50007,
-    "Experiment": "test"
+    "Experiment": "test",
+    "NumberOfPixels": 1600,
+    "FileName": "spe"
 }

@@ -56,9 +56,9 @@ class LightFieldController():
             path = self.experiment.GetValue(ExperimentSettings.FileNameGenerationDirectory)
         self.experiment.SetValue(ExperimentSettings.FileNameGenerationDirectory, path)
         self.experiment.SetValue(ExperimentSettings.FileNameGenerationBaseFileName, filename)
-        self.experiment.SetValue(ExperimentSettings.FileNameGenerationAttachIncrement, False)
-        self.experiment.SetValue(ExperimentSettings.FileNameGenerationAttachDate, False)
-        self.experiment.SetValue(ExperimentSettings.FileNameGenerationAttachTime, False)
+        # self.experiment.SetValue(ExperimentSettings.FileNameGenerationAttachIncrement, False)
+        # self.experiment.SetValue(ExperimentSettings.FileNameGenerationAttachDate, False)
+        # self.experiment.SetValue(ExperimentSettings.FileNameGenerationAttachTime, False)
         self.savedir = self.experiment.GetValue(ExperimentSettings.FileNameGenerationDirectory)
         if self.experiment.IsReadyToRun:
             self.experiment.Acquire()
@@ -73,7 +73,10 @@ class LightFieldController():
     def acquire_time(self):
         frames = self.experiment.GetValue(ExperimentSettings.AcquisitionFramesToStore)
         exposure = self.experiment.GetValue(CameraSettings.ShutterTimingExposureTime)
-        return float(frames)*(float(exposure)*0.001+0.1)+2
+        return float(frames)*(float(exposure)*0.001+0.1)+0.5
+
+    def reset_increment(self):
+        self.experiment.SetValue(ExperimentSettings.FileNameGenerationIncrementNumber , "0")
 
     def frame_avg(self, filename):
         filelist = os.listdir(self.get_dir())

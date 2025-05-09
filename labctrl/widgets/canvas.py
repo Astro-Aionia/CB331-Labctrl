@@ -33,6 +33,7 @@ class CanvasWidget(QWidget, Ui_MplCanvas):
         self.data_canvas.ax.clear()
         self.data_canvas.ax.plot(*args, **kwargs)
         self.data_canvas.draw()
+        QApplication.processEvents()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

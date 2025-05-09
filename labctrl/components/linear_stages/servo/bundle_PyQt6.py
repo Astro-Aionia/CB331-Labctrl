@@ -27,7 +27,7 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
         # UI setup and initialize parameters
         self.setupUi(self)
         self.lineEdit_1.setReadOnly(True)
-        self.lineEdit_1.setText(str(self.config["ManualPosition"]))
+        self.lineEdit_1.setText("{:.3f}".format(self.config["ManualPosition"]))
         self.lineEdit_2.setText(str(self.config["DrivingSpeed"]))
         self.lineEdit_8.setText(str(self.config["ZeroPointAbsolutePosition"]))
         self.lineEdit_3.setText("0.0")
@@ -102,6 +102,7 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
         @update_config
         def __set_scan_mode(comboxStatus: str):
             config["ScanMode"] = self.comboBox.currentText()
+            self.update_scanlist(config)
 
         self.comboBox.currentTextChanged.connect(__set_scan_mode)
 
@@ -135,12 +136,16 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
                 round = config["ScanRound"]
                 if config["ScanMode"] == "Range" or config["ScanMode"] == "ExtFile":
                     delaylist = self.lstat.stat[name]["ScanList"]
-                    for i in range(round):
-                        for pos in delaylist:
+                    for rd in range(round):
+                        for i, pos in enumerate(delaylist):
+                            if meta["TERMINATE"]:
+                                self.lstat.expmsg("[{name}][scan_range] Received signal TERMINATE, trying graceful Thread exit".format(name=name))
+                                break
                             response = self.remote.moveabs(pos)
                             self.lstat.fmtmsg(response)
-                            self.lstat.stat[name]["CurrentRound"] = i
+                            self.lstat.stat[name]["CurrentRound"] = rd
                             self.lstat.stat[name]["Delay"] = pos
+                            self.lstat.stat[name]["iDelay"] = i
                             func(meta=meta)
                 else:
                     self.lstat.expmsg("[{name}][scan_range] Range is set manually, so no action has been taken".format(name=name))
@@ -167,4 +172,4 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
         return self.lstat.stat[name]["ScanList"]
 
     def update_position(self):
-        self.lineEdit_1.setText(str(self.config["ManualPosition"]))
+        self.lineEdit_1.setText("{:.3f}".format(self.config["ManualPosition"]))

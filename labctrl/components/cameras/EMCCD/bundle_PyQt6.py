@@ -1,3 +1,5 @@
+from http.client import responses
+
 from labctrl.labconfig import LabConfig
 from labctrl.labstat import LabStat
 from .remote import RemoteEMCCD
@@ -26,13 +28,20 @@ class BundlePyQt6EMCCD(QWidget, Ui_EMCCD):
         self.remote = RemoteEMCCD(config)
 
         # UI setup
-        self.lineEdit.setText("spe")
+        self.lineEdit.setText(config["FileName"])
         self.canvas = CanvasWidget()
         hbox = QtWidgets.QHBoxLayout(self.widget)
         hbox.addWidget(self.canvas)
         self.pushButton_3.clicked.connect(lambda : self.close())
         # self.pushButton_2.clicked.connect(lambda : self.clean())
         self.pushButton_1.clicked.connect(lambda : self.acquire())
+
+        @update_config
+        def __set_filename():
+            filename = self.lineEdit.text()
+            config["FileName"] = filename
+
+        self.lineEdit.editingFinished.connect(__set_filename)
 
     def close(self):
         response = self.remote.close()
@@ -42,6 +51,10 @@ class BundlePyQt6EMCCD(QWidget, Ui_EMCCD):
     #     response = self.remote.clean_count()
     #     self.lstat.fmtmsg(response)
 
+    def reset(self):
+        response = self.remote.reset()
+        self.lstat.fmtmsg(response)
+
     def acquire(self):
         filename = self.lineEdit.text()
         response = self.remote.acquire(filename)
@@ -50,6 +63,8 @@ class BundlePyQt6EMCCD(QWidget, Ui_EMCCD):
         data = np.loadtxt(filepath, delimiter=',')
         # print(data)
         self.canvas.update_plot(data[:,0],data[:,1])
+        return data[:,1]
+
 
 
 

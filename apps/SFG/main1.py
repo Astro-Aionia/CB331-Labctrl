@@ -2,11 +2,10 @@ import sys
 import time
 import numpy as np
 from threading import Thread
-from functools import wraps
 
 from PyQt6.QtWidgets import QApplication, QMainWindow
 from PyQt6 import QtWidgets
-from PyQt6.QtCore import QThread, QObject
+from PyQt6.QtCore import QThread
 
 from labctrl.labconfig import LabConfig, lcfg
 from labctrl.labstat import LabStat, lstat
@@ -21,13 +20,6 @@ app_config: dict = lcfg.config["apps"][app_name]
 delay_stage_name = app_config["DelayLine"]
 detector_name = app_config["Detector"]
 topas_name = app_config["TOPAS"]
-
-class Worker(QObject):
-    def __init__(self, func, parent = None):
-        super().__init__(parent=parent)
-        self.func = func
-    def run(self):
-        self.func()
 
 class SFGExpData:
     def __init__(self, lcfg, lstat):
@@ -74,8 +66,6 @@ class SFGExperiment(QMainWindow, Ui_SFGExperiment):
     def __init__(self,lcfg: LabConfig, lstat: LabStat, parent=None):
         QMainWindow.__init__(self)
         self.setupUi(self)
-        self.lcfg = lcfg
-        self.lstat = lstat
 
         # add devices and functions
         factory = FactoryServoStage(lcfg, lstat)
@@ -120,75 +110,153 @@ class SFGExperiment(QMainWindow, Ui_SFGExperiment):
         b3 = QtWidgets.QGridLayout(self.TOPASWidget)
         b3.addWidget(self.topas)
 
-        @self.linear_stage.scan_range
+class SFGThread:
+    def __init__(self):
+        self.app = QApplication(sys.argv)
+        self.SFG = SFGExperiment(lcfg=lcfg, lstat=lstat)
+
+        SFG = self.SFG
+        SFG.pushButton_1.clicked.connect(__start)
+        SFG.pushButton_2.clicked.connect(__stop)
+
+        @SFG.linear_stage.scan_range
         def unit_operation(meta=dict()):
-            if self.flags["TERMINATE"]:
+            if SFG.flags["TERMINATE"]:
                 meta["TERMINATE"] = True
                 lstat.expmsg(
                     "PumpProbe operation received signal TERMINATE, trying graceful Thread exit")
                 return
             lstat.expmsg("Retriving signal from sensor...")
-            sig = self.detector.acquire()
+            sig = SFG.detector.acquire()
             lstat.expmsg("Adding latest signal to dataset...")
             stat = lstat.stat[delay_stage_name]
             if lstat.stat[topas_name]["ShutterIsOpen"]:
-                self.data.bg[stat["iDelay"],:] = sig
-                self.data.bgsum[stat["iDelay"], :] += sig
+                SFG.data.bg[stat["iDelay"], :] = sig
+                SFG.data.bgsum[stat["iDelay"], :] += sig
             else:
-                self.data.sig[stat["iDelay"], :] = sig
-                self.data.sigsum[stat["iDelay"], :] += sig
-                self.data.delta[stat["iDelay"], :] = sig - self.data.bg[stat["iDelay"], :]
-                self.data.deltasum[stat["iDelay"], :] += self.data.delta[stat["iDelay"], :]
+                SFG.data.sig[stat["iDelay"], :] = sig
+                SFG.data.sigsum[stat["iDelay"], :] += sig
+                SFG.data.delta[stat["iDelay"], :] = sig - SFG.data.bg[stat["iDelay"], :]
+                SFG.data.deltasum[stat["iDelay"], :] += SFG.data.delta[stat["iDelay"], :]
             QApplication.processEvents()
-            self.topas.change_shutter()
+            SFG.topas.change_shutter()
             # time.sleep(2)
             lstat.expmsg("Retriving signal from sensor...")
-            sig = self.detector.acquire()
+            sig = SFG.detector.acquire()
             lstat.expmsg("Adding latest signal to dataset...")
             stat = lstat.stat[delay_stage_name]
             if lstat.stat[topas_name]["ShutterIsOpen"]:
-                self.data.bg[stat["iDelay"], :] = sig
-                self.data.bgsum[stat["iDelay"], :] += sig
+                SFG.data.bg[stat["iDelay"], :] = sig
+                SFG.data.bgsum[stat["iDelay"], :] += sig
             else:
-                self.data.sig[stat["iDelay"], :] = sig
-                self.data.sigsum[stat["iDelay"], :] += sig
-                self.data.delta[stat["iDelay"], :] = sig - self.data.bg[stat["iDelay"], :]
-                self.data.deltasum[stat["iDelay"], :] += self.data.delta[stat["iDelay"], :]
+                SFG.data.sig[stat["iDelay"], :] = sig
+                SFG.data.sigsum[stat["iDelay"], :] += sig
+                SFG.data.delta[stat["iDelay"], :] = sig - SFG.data.bg[stat["iDelay"], :]
+                SFG.data.deltasum[stat["iDelay"], :] += SFG.data.delta[stat["iDelay"], :]
             if stat["iDelay"] + 1 == len(stat["ScanList"]):
                 lstat.expmsg("End of delay scan round, exporting data...")
-                self.data.export("acq_data/" + lcfg.config["cameras"][detector_name]["FileName"] + "_Round{rd}".format(rd=stat["CurrentRound"]) + ".csv")
+                SFG.data.export("acq_data/" + lcfg.config["cameras"][detector_name]["FileName"] + "_Round{rd}".format(rd=stat["CurrentRound"]) + ".csv")
             QApplication.processEvents()
 
-        def task():
-            lstat.expmsg("Allocating memory for experiment")
-            self.data = SFGExpData(lcfg, lstat)
-            lstat.expmsg("Starting experiment")
-            self.detector.reset()
-            meta = dict()
-            meta["TERMINATE"] = False
-            unit_operation(meta=meta)
-            self.flags["FINISH"] = True
-            self.flags["RUNNING"] = False
-            lstat.expmsg("Experiment done")
+        self.unit_operation = unit_operation
 
-        def __start():
-            self.flags["TERMINATE"] = False
-            self.flags["FINISH"] = False
-            self.flags["RUNNING"] = True
-            task()
+    def task(self):
+        lstat.expmsg("Allocating memory for experiment")
+        self.SFG.data = SFGExpData(lcfg, lstat)
+        lstat.expmsg("Starting experiment")
+        self.SFG.detector.reset()
+        meta = dict()
+        meta["TERMINATE"] = False
+        self.unit_operation(meta=meta)
+        self.SFG.flags["FINISH"] = True
+        self.SFG.flags["RUNNING"] = False
+        lstat.expmsg("Experiment done")
 
-        self.pushButton_1.clicked.connect(__start)
+    def run(self):
+        self.SFG.flags["TERMINATE"] = False
+        self.SFG.flags["FINISH"] = False
+        self.SFG.flags["RUNNING"] = True
+        thread = Thread(target=self.task)
+        thread.start()
 
-        def __stop():
-            lstat.expmsg("Terminating current job")
-            self.flags["TERMINATE"] = True
-            self.flags["FINISH"] = False
-            self.flags["RUNNING"] = False
+    def stop(self):
+        lstat.expmsg("Terminating current job")
+        self.SFG.flags["TERMINATE"] = True
+        self.SFG.flags["FINISH"] = False
+        self.SFG.flags["RUNNING"] = False
 
-        self.pushButton_2.clicked.connect(__stop)
 
 def app_run():
     app = QApplication(sys.argv)
-    mainWindow = SFGExperiment(lcfg=lcfg, lstat=lstat)
-    mainWindow.show()
+    SFG = SFGExperiment(lcfg=lcfg, lstat=lstat)
+
+    @SFG.linear_stage.scan_range
+    def unit_operation(meta=dict()):
+        if SFG.flags["TERMINATE"]:
+            meta["TERMINATE"] = True
+            lstat.expmsg(
+                "PumpProbe operation received signal TERMINATE, trying graceful Thread exit")
+            return
+        lstat.expmsg("Retriving signal from sensor...")
+        sig = SFG.detector.acquire()
+        lstat.expmsg("Adding latest signal to dataset...")
+        stat = lstat.stat[delay_stage_name]
+        if lstat.stat[topas_name]["ShutterIsOpen"]:
+            SFG.data.bg[stat["iDelay"], :] = sig
+            SFG.data.bgsum[stat["iDelay"], :] += sig
+        else:
+            SFG.data.sig[stat["iDelay"], :] = sig
+            SFG.data.sigsum[stat["iDelay"], :] += sig
+            SFG.data.delta[stat["iDelay"], :] = sig - SFG.data.bg[stat["iDelay"], :]
+            SFG.data.deltasum[stat["iDelay"], :] += SFG.data.delta[stat["iDelay"], :]
+        QApplication.processEvents()
+        SFG.topas.change_shutter()
+        # time.sleep(2)
+        lstat.expmsg("Retriving signal from sensor...")
+        sig = SFG.detector.acquire()
+        lstat.expmsg("Adding latest signal to dataset...")
+        stat = lstat.stat[delay_stage_name]
+        if lstat.stat[topas_name]["ShutterIsOpen"]:
+            SFG.data.bg[stat["iDelay"], :] = sig
+            SFG.data.bgsum[stat["iDelay"], :] += sig
+        else:
+            SFG.data.sig[stat["iDelay"], :] = sig
+            SFG.data.sigsum[stat["iDelay"], :] += sig
+            SFG.data.delta[stat["iDelay"], :] = sig - SFG.data.bg[stat["iDelay"], :]
+            SFG.data.deltasum[stat["iDelay"], :] += SFG.data.delta[stat["iDelay"], :]
+        if stat["iDelay"] + 1 == len(stat["ScanList"]):
+            lstat.expmsg("End of delay scan round, exporting data...")
+            SFG.data.export("acq_data/" + lcfg.config["cameras"][detector_name]["FileName"] + "_Round{rd}".format(rd=stat["CurrentRound"]) + ".csv")
+        QApplication.processEvents()
+
+    def task():
+        lstat.expmsg("Allocating memory for experiment")
+        SFG.data = SFGExpData(lcfg, lstat)
+        lstat.expmsg("Starting experiment")
+        SFG.detector.reset()
+        meta = dict()
+        meta["TERMINATE"] = False
+        unit_operation(meta=meta)
+        SFG.flags["FINISH"] = True
+        SFG.flags["RUNNING"] = False
+        lstat.expmsg("Experiment done")
+
+    def __start():
+        SFG.flags["TERMINATE"] = False
+        SFG.flags["FINISH"] = False
+        SFG.flags["RUNNING"] = True
+        thread = Thread(target=task)
+        thread.start()
+
+    SFG.pushButton_1.clicked.connect(__start)
+
+    def __stop():
+        lstat.expmsg("Terminating current job")
+        SFG.flags["TERMINATE"] = True
+        SFG.flags["FINISH"] = False
+        SFG.flags["RUNNING"] = False
+
+    SFG.pushButton_2.clicked.connect(__stop)
+
+    SFG.show()
     sys.exit(app.exec())

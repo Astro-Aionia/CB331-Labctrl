@@ -13,6 +13,7 @@ servers/EMCCD/raw/*.spe
 # proprietary programs or files from providers
 servers/linear_stages/AeroTech_THz/Proprietary/*
 servers/linear_stages/CRD507/Proprietary/*
+servers/cameras/EMCCD/raw/*
 # portable python(32bit) for 32bit library, the users need to get their own, or decompress python.7z
 servers/linear_stages/PMC48MT6_fsTopas/python
 # software for tweaking motor driver (SigmaWinPlus), you can download it from yaskawa website
