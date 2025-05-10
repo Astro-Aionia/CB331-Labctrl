@@ -30,12 +30,16 @@ def set_wavelength(interaction, wavelength):
     interaction = str(interaction)
     interaction_num = _interaction_list.index(interaction)
     wavelength = float(wavelength)
-    topas.setWavelength(topas.interactions[interaction_num], wavelength)
+    status = topas.setWavelength(topas.interactions[interaction_num], wavelength)
     res = dict()
-    res['success'] = True
-    res['message'] = f"Wavelength set to ({interaction}) {wavelength} nm"
-    res['interaction'] = topas.interaction
-    res['wavelength'] = topas.wavelength
+    if status:
+        res['success'] = True
+        res['message'] = f"Wavelength set to ({interaction}) {wavelength} nm"
+        res['interaction'] = topas.interaction
+        res['wavelength'] = topas.wavelength
+    else:
+        res['success'] = False
+        res['message'] = "Wavelength out of range."
     res = json.dumps(res)
     return Response(res, status=200, mimetype='application/json')
 
@@ -46,8 +50,10 @@ def change_shutter():
     res['success'] = True
     if status:
         res['message'] = "Shutter is closed."
+        res["shutterIsOpen"] = False
     else:
         res['message'] = "Shutter is open."
+        res["shutterIsOpen"] = True
     res['interaction'] = topas.interaction
     res['wavelength'] = topas.wavelength
     res = json.dumps(res)

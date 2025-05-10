@@ -1,15 +1,16 @@
 {
     "Name": "T23232P",
-    "Comment": "The ps TOPAS with static optical path.",
+    "Comment": "ps TOPAS-PS-800 working througth the static optical path.",
     "Host": "127.0.0.1",
     "Port": "50004",
     "WorkingUnit": "nm",
-    "ScanMode": "Range",
+    "ScanMode": "Manual",
     "RangeScanStart": 3500.0,
     "RangeScanStop": 5000.0,
     "RangeScanStep": 500.0,
     "LoadedExternalScanList": [3500.0, 4000.0, 4500.0, 5000.0],
     "ManualUnit": "nm",
     "ManualTarget": 1300.0,
+    "ManualInteraction": "SIG",
     "ManualStep": 1.0
 }

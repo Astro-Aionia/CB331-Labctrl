@@ -1,15 +1,16 @@
 {
-    "Name": "T23233P",
-    "Comment": "The fs TOPAS.",
+    "Name": "T23231P",
+    "Comment": "fs TOPAS-Prime.",
     "Host": "127.0.0.1",
     "Port": "50003",
     "WorkingUnit": "nm",
-    "ScanMode": "Range",
+    "ScanMode": "Manual",
     "RangeScanStart": 3500.0,
     "RangeScanStop": 5000.0,
     "RangeScanStep": 500.0,
     "LoadedExternalScanList": [3500.0, 4000.0, 4500.0, 5000.0],
     "ManualUnit": "nm",
     "ManualTarget": 1300.0,
+    "ManualInteraction": "SIG",
     "ManualStep": 1.0
 }

@@ -23,7 +23,8 @@ class BundlePyQt6TOPAS(QWidget, Ui_TOPASDemo):
 
         # UI setup and initialize parameters
         self.setupUi(self)
-        self.comboBox.setCurrentText(config["ManualInteraction"])
+        self.comboBox_1.setCurrentText(config["ManualInteraction"])
+        self.comboBox_2.setCurrentText(config["ScanMode"])
         self.lineEdit_1.setText(str(config["ManualTarget"]))
         self.lineEdit_2.setText(str(config["RangeScanStart"]))
         self.lineEdit_3.setText(str(config["RangeScanStop"]))
@@ -33,7 +34,7 @@ class BundlePyQt6TOPAS(QWidget, Ui_TOPASDemo):
 
         @update_config
         def __set_wavelength():
-            interation = self.comboBox.currentText()
+            interation = self.comboBox_1.currentText()
             wavelength = self.lineEdit_1.text()
             response = self.remote.set_wavelength(interation, wavelength)
             config["ManualTarget"] = wavelength
@@ -41,6 +42,12 @@ class BundlePyQt6TOPAS(QWidget, Ui_TOPASDemo):
             self.lstat.fmtmsg(response)
 
         self.lineEdit_1.editingFinished.connect(__set_wavelength)
+
+        def __set_scan_mode():
+            config["ScanMode"] = self.comboBox_2.currentText()
+            self.update_scanlist(config)
+
+        self.comboBox_2.currentTextChanged.connect(__set_scan_mode)
 
         def __set_scanlist():
             config["RangeScanStart"] = float(self.lineEdit_2.text())
@@ -51,6 +58,39 @@ class BundlePyQt6TOPAS(QWidget, Ui_TOPASDemo):
         self.lineEdit_2.editingFinished.connect(__set_scanlist)
         self.lineEdit_3.editingFinished.connect(__set_scanlist)
         self.lineEdit_4.editingFinished.connect(__set_scanlist)
+
+        def scan_range(func, meta=''):
+            """
+            decorator, when applied to func, scan range for func.
+            adds or alters the following meta params:
+                meta[name]["PumpWavelength"] : str or float, current wavelength
+                meta[name]["iPumpWavelength"]: int, index of current wavelength
+            """
+
+            def iterate(meta=dict()):
+                if config["ScanMode"] == "Range":
+                    wvlist = self.lstat.stat[name]["ScanList"]
+                    interation = self.comboBox_1.currentText()
+                    for i, wv in enumerate(wvlist):
+                        if meta["TERMINATE"]:
+                            self.lstat.expmsg(
+                                "[{name}][scan_range] Received signal TERMINATE, trying graceful Thread exit".format(name=name))
+                            break
+                        response = self.remote.set_wavelength(interation, wv)
+                        self.lstat.fmtmsg(response)
+                        self.lstat.stat[name]["PumpWavelength"] = wv
+                        self.lstat.stat[name]["iPumpWavelength"] = i
+                        func(meta=meta)
+                else:
+                    self.lstat.expmsg(
+                        "[{name}][scan_range] Range is set manually, so no action has been taken".format(name=name))
+                    self.lstat.stat[name]["PumpWavelength"] = config["ManualTarget"]
+                    self.lstat.stat[name]["iPumpWavelength"] = 0
+                    func(meta=meta)
+
+            return iterate
+
+        self.scan_range = scan_range
 
     def change_shutter(self):
         name = self.name
@@ -65,6 +105,10 @@ class BundlePyQt6TOPAS(QWidget, Ui_TOPASDemo):
         name = config["Name"]
         if name not in self.lstat.stat:
             self.lstat.stat[name] = dict()
-        self.lstat.stat[name]["ScanList"] = np.arange(config["RangeScanStart"], config["RangeScanStop"], config["RangeScanStep"]).tolist()
+        if config["ScanMode"] == "Range":
+            self.lstat.stat[name]["ScanList"] = np.arange(config["RangeScanStart"], config["RangeScanStop"], config["RangeScanStep"]).tolist()
+        else:
+            self.lstat.stat[name]["ScanList"] = [config["ManualTarget"]]
+        self.lstat.expmsg("Generated Wavelength Scan List: {}".format(self.lstat.stat[name]["ScanList"]))
         self.lstat.dump_stat("last_stat.json")
         return self.lstat.stat[name]["ScanList"]

@@ -45,7 +45,7 @@ class Topas4Controller:
         if len(self.interactions) == 0:
             print("No interaction")
 
-    def setWavelength(self, interaction, wavelength):
+    def setWavelength(self, interaction, wavelength) -> bool:
         print("Setting wavelength to {wv} with interaction {interaction}".format(wv=wavelength, interaction=interaction['Type']))
         if interaction['OutputRange']['From'] < wavelength < interaction['OutputRange']['To']:
             response = self.put('/Optical/WavelengthControl/SetWavelength', {'Interaction':interaction['Type'], 'Wavelength':wavelength})
@@ -53,8 +53,10 @@ class Topas4Controller:
             print("Wavelength set, response:", response)
             self.interaction = interaction['Type']
             self.wavelength = wavelength
+            return True
         else:
             print("Wavelength out of range.")
+            return False
 
     def waitTillWavelengthIsSet(self):
        """

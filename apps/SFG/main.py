@@ -11,7 +11,7 @@ from labctrl.labstat import LabStat, lstat
 
 from .ui.SFG import Ui_SFGExperiment
 from labctrl.components.linear_stages.servo.factory import FactoryServoStage
-from labctrl.components.TOPAS.Demo.factory import FactoryTOPAS
+from labctrl.components.TOPAS.factory import FactoryTOPAS
 from labctrl.components.cameras.EMCCD.factory import FactoryEMCCD
 from labctrl.widgets.message_box import MessageWidget
 
@@ -113,6 +113,7 @@ class SFGExperiment(QMainWindow, Ui_SFGExperiment):
         b3.addWidget(self.topas)
 
         @self.linear_stage.scan_range
+        @self.topas.scan_range
         def unit_operation(meta=dict()):
             if self.flags["TERMINATE"]:
                 meta["TERMINATE"] = True
@@ -148,7 +149,7 @@ class SFGExperiment(QMainWindow, Ui_SFGExperiment):
                 self.data.deltasum[stat["iDelay"], :] += self.data.delta[stat["iDelay"], :]
             if stat["iDelay"] + 1 == len(stat["ScanList"]):
                 lstat.expmsg("End of delay scan round, exporting data...")
-                self.data.export("acq_data/" + lcfg.config["cameras"][detector_name]["FileName"] + "_Round{rd}".format(rd=stat["CurrentRound"]) + ".csv")
+                self.data.export("acq_data/" + lcfg.config["cameras"][detector_name]["FileName"] + "-Round{rd}".format(rd=stat["CurrentRound"]) + "-Pump{wv}".format(wv=lstat.stat[topas_name]["PumpWavelength"]) + ".csv")
             QApplication.processEvents()
 
         def task():

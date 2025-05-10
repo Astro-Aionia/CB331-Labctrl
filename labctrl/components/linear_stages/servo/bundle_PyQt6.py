@@ -149,6 +149,7 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
                             func(meta=meta)
                 else:
                     self.lstat.expmsg("[{name}][scan_range] Range is set manually, so no action has been taken".format(name=name))
+                    self.lstat.stat[name]["CurrentRound"] = 0
                     self.lstat.stat[name]["Delay"] = "ManualDelay"
                     self.lstat.stat[name]["iDelay"] = 0
                     func(meta=meta)
@@ -166,8 +167,8 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
         elif config["ScanMode"] == "ExtFile":
             self.lstat.stat[name]["ScanList"]  = np.loadtxt(config["LoadedExternalScanList"]).tolist()
         else:
-            self.lstat.stat[name]["ScanList"] = [None]
-        self.lstat.expmsg("Generated Scan List: {}".format(self.lstat.stat[name]["ScanList"]))
+            self.lstat.stat[name]["ScanList"] = [config["ManualPosition"]]
+        self.lstat.expmsg("Generated Position Scan List: {}".format(self.lstat.stat[name]["ScanList"]))
         self.lstat.dump_stat("last_stat.json")
         return self.lstat.stat[name]["ScanList"]
 
