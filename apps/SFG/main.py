@@ -114,6 +114,7 @@ class SFGExperiment(QMainWindow, Ui_SFGExperiment):
 
         @self.linear_stage.scan_range
         @self.topas.scan_range
+        @self.topas.shutter_swich_acquire
         def unit_operation(meta=dict()):
             if self.flags["TERMINATE"]:
                 meta["TERMINATE"] = True
@@ -125,30 +126,15 @@ class SFGExperiment(QMainWindow, Ui_SFGExperiment):
             lstat.expmsg("Adding latest signal to dataset...")
             stat = lstat.stat[delay_stage_name]
             if lstat.stat[topas_name]["ShutterIsOpen"]:
+                self.data.sig[stat["iDelay"], :] = sig
+                self.data.sigsum[stat["iDelay"], :] += sig
+                self.data.delta[stat["iDelay"], :] = sig - self.data.bg[stat["iDelay"], :]
+                self.data.deltasum[stat["iDelay"], :] += self.data.delta[stat["iDelay"], :]
+            else:
                 self.data.bg[stat["iDelay"],:] = sig
                 self.data.bgsum[stat["iDelay"], :] += sig
-            else:
-                self.data.sig[stat["iDelay"], :] = sig
-                self.data.sigsum[stat["iDelay"], :] += sig
-                self.data.delta[stat["iDelay"], :] = sig - self.data.bg[stat["iDelay"], :]
-                self.data.deltasum[stat["iDelay"], :] += self.data.delta[stat["iDelay"], :]
-            QApplication.processEvents()
-            self.topas.change_shutter()
-            # time.sleep(2)
-            lstat.expmsg("Retriving signal from sensor...")
-            sig = self.detector.acquire()
-            lstat.expmsg("Adding latest signal to dataset...")
-            stat = lstat.stat[delay_stage_name]
-            if lstat.stat[topas_name]["ShutterIsOpen"]:
-                self.data.bg[stat["iDelay"], :] = sig
-                self.data.bgsum[stat["iDelay"], :] += sig
-            else:
-                self.data.sig[stat["iDelay"], :] = sig
-                self.data.sigsum[stat["iDelay"], :] += sig
-                self.data.delta[stat["iDelay"], :] = sig - self.data.bg[stat["iDelay"], :]
-                self.data.deltasum[stat["iDelay"], :] += self.data.delta[stat["iDelay"], :]
             if stat["iDelay"] + 1 == len(stat["ScanList"]):
-                lstat.expmsg("End of delay scan round, exporting data...")
+                lstat.expmsg("End of delay scan round {rd}, exporting data...".format(rd=stat["CurrentRound"]))
                 self.data.export("acq_data/" + lcfg.config["cameras"][detector_name]["FileName"] + "-Round{rd}".format(rd=stat["CurrentRound"]) + "-Pump{wv}".format(wv=lstat.stat[topas_name]["PumpWavelength"]) + ".csv")
             QApplication.processEvents()
 

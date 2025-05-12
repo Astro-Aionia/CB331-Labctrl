@@ -33,7 +33,7 @@ class BundlePyQt6EMCCD(QWidget, Ui_EMCCD):
         hbox = QtWidgets.QHBoxLayout(self.widget)
         hbox.addWidget(self.canvas)
         self.pushButton_3.clicked.connect(lambda : self.close())
-        # self.pushButton_2.clicked.connect(lambda : self.clean())
+        self.pushButton_2.clicked.connect(lambda : self.clean())
         self.pushButton_1.clicked.connect(lambda : self.acquire())
 
         @update_config
@@ -47,9 +47,9 @@ class BundlePyQt6EMCCD(QWidget, Ui_EMCCD):
         response = self.remote.close()
         self.lstat.fmtmsg(response)
 
-    # def clean(self):
-    #     response = self.remote.clean_count()
-    #     self.lstat.fmtmsg(response)
+    def clean(self):
+        response = self.remote.clean_count()
+        self.lstat.fmtmsg(response)
 
     def reset(self):
         response = self.remote.reset()
@@ -59,7 +59,7 @@ class BundlePyQt6EMCCD(QWidget, Ui_EMCCD):
         filename = self.lineEdit.text()
         response = self.remote.acquire(filename)
         self.lstat.fmtmsg(response)
-        filepath = response["save_path"] + "\\" + response["filename"] + ".csv"
+        filepath = response["save_path"] + "\\" + response["filename"]
         data = np.loadtxt(filepath, delimiter=',')
         # print(data)
         self.canvas.update_plot(data[:,0],data[:,1])

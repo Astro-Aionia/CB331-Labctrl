@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 from labctrl.labconfig import LabConfig
 from labctrl.labstat import LabStat
@@ -91,6 +93,25 @@ class BundlePyQt6TOPAS(QWidget, Ui_TOPASDemo):
             return iterate
 
         self.scan_range = scan_range
+
+        def shutter_swich_acquire(func,  meta=''):
+            """
+            decorator, when applied to func, running func twice with and without pump from this TOPAS.
+            """
+
+            def iterate(meta=dict()):
+                for i in range(2):
+                    self.change_shutter()
+                    time.sleep(0.1)
+                    if lstat.stat[name]["ShutterIsOpen"]:
+                        lstat.expmsg("Now taking the signal...")
+                        func(meta=meta)
+                    else:
+                        lstat.expmsg("Now taking the background...")
+                        func(meta=meta)
+            return iterate
+
+        self.shutter_swich_acquire = shutter_swich_acquire
 
     def change_shutter(self):
         name = self.name

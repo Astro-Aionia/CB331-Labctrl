@@ -27,7 +27,7 @@ class LightFieldController():
     def __init__(self, experiment: str = None, interface=True):
         self.auto = None
         self.experiment = None
-        # self.count = 0
+        self.count = 0
         try:
             self.auto = Automation(interface, List[String]())
             self.experiment = self.auto.LightFieldApplication.Experiment
@@ -55,10 +55,10 @@ class LightFieldController():
         if path == None:
             path = self.experiment.GetValue(ExperimentSettings.FileNameGenerationDirectory)
         self.experiment.SetValue(ExperimentSettings.FileNameGenerationDirectory, path)
-        self.experiment.SetValue(ExperimentSettings.FileNameGenerationBaseFileName, filename)
-        # self.experiment.SetValue(ExperimentSettings.FileNameGenerationAttachIncrement, False)
-        # self.experiment.SetValue(ExperimentSettings.FileNameGenerationAttachDate, False)
-        # self.experiment.SetValue(ExperimentSettings.FileNameGenerationAttachTime, False)
+        self.experiment.SetValue(ExperimentSettings.FileNameGenerationBaseFileName, filename+"-"+str(self.count).zfill(6))
+        self.experiment.SetValue(ExperimentSettings.FileNameGenerationAttachIncrement, False)
+        self.experiment.SetValue(ExperimentSettings.FileNameGenerationAttachDate, False)
+        self.experiment.SetValue(ExperimentSettings.FileNameGenerationAttachTime, False)
         self.savedir = self.experiment.GetValue(ExperimentSettings.FileNameGenerationDirectory)
         if self.experiment.IsReadyToRun:
             self.experiment.Acquire()
@@ -66,7 +66,7 @@ class LightFieldController():
             if self.experiment.GetValue(ExperimentSettings.OnlineExportEnabled):
                 self.frame_avg(filename=filename)
             print("Image {num} saved to {path}".format(num=filename, path=self.savedir))
-            # self.count = self.count + 1
+            self.count = self.count + 1
         else:
             print("Devices is not ready.")
 
@@ -93,10 +93,10 @@ class LightFieldController():
         np.savetxt(self.get_dir() + '\\' + filename + '.csv', data, delimiter=',')
         return data
 
-    # def clean(self):
-    #     self.count = 0
-    #     self.experiment.SetValue(ExperimentSettings.FileNameGenerationBaseFileName, '')
-    #     print("Acquisition number reset to 0.")
+    def clean(self):
+        self.count = 0
+        self.experiment.SetValue(ExperimentSettings.FileNameGenerationBaseFileName, '')
+        print("Acquisition number reset to 0.")
 
 
 class LightFieldEmulator():
@@ -111,7 +111,7 @@ class LightFieldEmulator():
 
     def acquire(self, path="C:\\Users\\zhenggroup\\Documents\\LightField", prefix='spe', export=False):
         filename = prefix + str(self.count).zfill(5)
-        print("Image {num} saved to {path}".format(num=filename, path=self.savedir))
+        print("Image {filename} saved to {path}".format(filename=filename, path=self.savedir))
         self.count = self.count + 1
 
     def clean(self):
@@ -119,6 +119,6 @@ class LightFieldEmulator():
         print("Acquisition number reset to 0.")
 
 if __name__ == '__main__':
-    app = LightFieldController()
-    app.acquire()
+    app = LightFieldController(experiment="SFG")
+    print(app.acquire("test"))
     app.close()

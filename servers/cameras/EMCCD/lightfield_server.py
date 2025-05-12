@@ -27,14 +27,14 @@ def close():
     res = json.dumps(res)
     return Response(res, status=200, mimetype='application/json')
 
-# @app.route("/clean_count")
-# def clean_count():
-#     emccd.clean()
-#     res = dict()
-#     res['success'] = True
-#     res['message'] = "Acquisition count reset to 0"
-#     res = json.dumps(res)
-#     return Response(res, status=200, mimetype='application/json')
+@app.route("/clean_count")
+def clean_count():
+    emccd.clean()
+    res = dict()
+    res['success'] = True
+    res['message'] = "Acquisition count reset to 0"
+    res = json.dumps(res)
+    return Response(res, status=200, mimetype='application/json')
 
 @app.route("/acquire/<filename>")
 def acquire(filename):
@@ -42,10 +42,10 @@ def acquire(filename):
     emccd.acquire(filename=filename)
     res = dict()
     res['success'] = True
-    res['message'] = f"Spectrum {filename} saved to {emccd.savedir}."
+    res['message'] = f"Spectrum {filename}-{str(emccd.count-1).zfill(6)}.csv saved to {emccd.savedir}."
     res['save_path'] = emccd.savedir
-    res['filename'] = filename
-    # res['acq_number'] = emccd.count - 1
+    res['filename'] = filename+"-"+str(emccd.count-1).zfill(6)+'.csv'
+    res['acq_number'] = emccd.count - 1
     res = json.dumps(res)
     return Response(res, status=200, mimetype='application/json')
 

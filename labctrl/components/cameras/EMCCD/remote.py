@@ -41,8 +41,8 @@ class RemoteEMCCD():
     def close(self):
         return self.apicall('/close')
 
-    # def clean_count(self):
-    #     return self.apicall('/clean_count')
+    def clean_count(self):
+        return self.apicall('/clean_count')
 
     def reset(self):
         return self.apicall('/reset')

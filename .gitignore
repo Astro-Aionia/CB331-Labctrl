@@ -9,7 +9,7 @@ acq_data/*
 logs/*.csv
 logs/*.txt
 logs/*.log
-servers/EMCCD/raw/*.spe
+servers/EMCCD/raw/*
 # proprietary programs or files from providers
 servers/linear_stages/AeroTech_THz/Proprietary/*
 servers/linear_stages/CRD507/Proprietary/*
