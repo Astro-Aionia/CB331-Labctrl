@@ -7,6 +7,6 @@
 # mainWindow.show()
 # sys.exit(app.exec())
 
-from apps.SFG.main import app_run
+from apps.TRSTM_SP.main import app_run
 
 app_run()
