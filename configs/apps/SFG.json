@@ -1,6 +1,6 @@
 {
-    "Name": "Linear Stage Control",
-    "Comment": "Simply move the stage without any additional operation",
+    "Name": "SFG",
+    "Comment": "High-resolution, board band surface vibrational sum-frequency generation. A extra ps IR pump to make vibrational coherence and 2D spectroscopy.",
     "DelayLine": "servo",
     "Detector": "EMCCD",
     "TOPAS": "T23233P"

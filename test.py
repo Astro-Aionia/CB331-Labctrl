@@ -1,8 +1,11 @@
-from labctrl.components.TOPAS.remote import ProxiedTOPAS
+import sys
+from labctrl.labstat import LabStat, lstat
 from labctrl.labconfig import LabConfig, lcfg
+from PyQt6.QtWidgets import QApplication
+from labctrl.components.lockin_and_boxcars.ziUHF.factory import FactoryZiUHF
 
-topas = ProxiedTOPAS(config=lcfg.config["TOPAS"]["T23233P"])
-
-for wv in range(3500, 3550, 1):
-    response = topas.set_wavelength(interaction="DF1-SIG", wavelength=wv)
-    print(response)
+factory = FactoryZiUHF()
+app = QApplication(sys.argv)
+uhf = factory.generate_bundle(lcfg=lcfg, lstat=lstat)
+uhf.show()
+sys.exit(app.exec())

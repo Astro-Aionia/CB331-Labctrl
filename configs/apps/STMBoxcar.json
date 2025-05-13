@@ -1,0 +1,9 @@
+{
+    "Name": "STMBoxcar",
+    "Comment": "TR-STM. PS pump laser to give time resolution and boxcar to detect small signal.",
+    "DelayLine": "servo",
+    "Boxcar": "ziUHF",
+    "PumpStatic": "T23232P",
+    "PumpDynamic": "T23233P",
+    "SaveFileName": "DelayScan"
+}
