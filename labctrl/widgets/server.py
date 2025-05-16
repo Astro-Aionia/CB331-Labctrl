@@ -28,7 +28,6 @@ class ServerWidget(QWidget, Ui_Server):
 
         def __test():
             try:
-                print("http://{host}:{port}/".format(host=config["Host"], port=config["Port"]))
                 response = requests.get("http://{host}:{port}/".format(host=config["Host"], port=config["Port"]))
                 rc = response.content.decode()
                 if json.loads(rc)["success"]:

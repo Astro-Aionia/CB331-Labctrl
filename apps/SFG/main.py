@@ -167,8 +167,16 @@ class SFGExperiment(QMainWindow, Ui_SFGExperiment):
 
         self.pushButton_2.clicked.connect(__stop)
 
-def app_run():
+if __name__ == "__main__":
     SFG = QApplication(sys.argv)
     mainWindow = SFGExperiment(lcfg=lcfg, lstat=lstat)
     mainWindow.show()
     sys.exit(SFG.exec())
+else:
+    def app_run():
+        SFG = QApplication(sys.argv)
+        mainWindow = SFGExperiment(lcfg=lcfg, lstat=lstat)
+        mainWindow.show()
+        sys.exit(SFG.exec())
+
+    mainWindow = SFGExperiment(lcfg=lcfg, lstat=lstat)

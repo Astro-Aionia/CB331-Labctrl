@@ -34,8 +34,16 @@ class LinearStageControlExperiment(QMainWindow, Ui_LinearStageControlExperiment)
         self.message_box = MessageWidget(lstat)
         ui_layout.addWidget(self.message_box)
 
-def app_run():
+if __name__ == "__main__":
     app = QApplication(sys.argv)
     mainWindow = LinearStageControlExperiment(lcfg=lcfg, lstat=lstat)
     mainWindow.show()
     sys.exit(app.exec())
+else:
+    def app_run():
+        app = QApplication(sys.argv)
+        mainWindow = LinearStageControlExperiment(lcfg=lcfg, lstat=lstat)
+        mainWindow.show()
+        sys.exit(app.exec())
+
+    mainWindow = LinearStageControlExperiment(lcfg=lcfg, lstat=lstat)

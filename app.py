@@ -1,16 +1,12 @@
 import sys
-import os
 
 from labctrl.labconfig import LabConfig, lcfg
 from labctrl.labstat import LabStat, lstat
 
-from PyQt6 import QtWidgets
 from PyQt6.QtWidgets import QApplication, QMainWindow
 from labctrl.widgets.ui.labctrl import Ui_Labctrl
 from labctrl.widgets.server import FactoryServer
 from labctrl.widgets.app_button import AppButton
-
-import apps
 
 class Labctrl(QMainWindow, Ui_Labctrl):
     def __init__(self, lcfg: LabConfig, lstat: LabStat, parent=None):
@@ -70,7 +66,6 @@ class Labctrl(QMainWindow, Ui_Labctrl):
         for i, item in enumerate(lcfg.config["apps"]):
             self.apps.append(AppButton(app_name=item))
             self.app_group.addWidget(self.apps[i])
-
 
 labctrl = QApplication(sys.argv)
 mainWindow = Labctrl(lcfg=lcfg, lstat=lstat)

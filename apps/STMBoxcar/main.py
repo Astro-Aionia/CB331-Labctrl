@@ -173,8 +173,16 @@ class STMBoxcarExperiment(QMainWindow, Ui_STMBoxcarExperiment):
 
         self.lineEdit.editingFinished.connect(__set_filename)
 
-def app_run():
+if __name__ == "mainWindow":
     STMBoxcar = QApplication(sys.argv)
     mainWindow = STMBoxcarExperiment(lcfg=lcfg, lstat=lstat)
     mainWindow.show()
     sys.exit(STMBoxcar.exec())
+else:
+    def app_run():
+        STMBoxcar = QApplication(sys.argv)
+        mainWindow = STMBoxcarExperiment(lcfg=lcfg, lstat=lstat)
+        mainWindow.show()
+        sys.exit(STMBoxcar.exec())
+
+    mainWindow = STMBoxcarExperiment(lcfg=lcfg, lstat=lstat)
