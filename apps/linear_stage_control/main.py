@@ -8,6 +8,7 @@ from labctrl.labstat import LabStat, lstat
 
 from .ui.linear_stage_control import Ui_LinearStageControlExperiment
 from labctrl.components.linear_stages.servo.factory import FactoryServoStage
+from labctrl.widgets.message_box import MessageWidget
 
 app_name = "linear_stage_control"
 app_config: dict = lcfg.config["apps"][app_name]
@@ -28,9 +29,10 @@ class LinearStageControlExperiment(QMainWindow, Ui_LinearStageControlExperiment)
         self.linear_stage = factory.generate_bundle(delayline_bundle_config)
 
         # setup UI
-        ui_layout = QtWidgets.QHBoxLayout(self.centralwidget)
+        ui_layout = QtWidgets.QVBoxLayout(self.centralwidget)
         ui_layout.addWidget(self.linear_stage)
-        ui_layout.addWidget(lstat.widget)
+        self.message_box = MessageWidget(lstat)
+        ui_layout.addWidget(self.message_box)
 
 def app_run():
     app = QApplication(sys.argv)

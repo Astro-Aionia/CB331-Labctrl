@@ -12,7 +12,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_LinearStageControlExperiment(object):
     def setupUi(self, LinearStageControlExperiment):
         LinearStageControlExperiment.setObjectName("LinearStageControlExperiment")
-        LinearStageControlExperiment.resize(800, 600)
+        LinearStageControlExperiment.resize(560, 680)
         self.centralwidget = QtWidgets.QWidget(parent=LinearStageControlExperiment)
         self.centralwidget.setObjectName("centralwidget")
         LinearStageControlExperiment.setCentralWidget(self.centralwidget)
