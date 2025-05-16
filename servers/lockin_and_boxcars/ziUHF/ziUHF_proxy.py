@@ -36,3 +36,5 @@ def get_value():
     res = json.dumps(res)
     return Response(res, status=200, mimetype='application/json')
 
+if __name__ == '__main__':
+    app.run(host='127.0.0.1', port=50008)
