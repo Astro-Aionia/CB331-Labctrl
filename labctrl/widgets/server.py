@@ -32,11 +32,14 @@ class ServerWidget(QWidget, Ui_Server):
                 rc = response.content.decode()
                 if json.loads(rc)["success"]:
                     self.status.setText("ON")
+                    self.status.setStyleSheet("color: green;")
                 else:
                     self.status.setText("OFF")
+                    self.status.setStyleSheet("color: red;")
             except requests.exceptions.ConnectionError as err:
                 print(err)
                 self.status.setText("OFF")
+                self.status.setStyleSheet("color: red;")
 
         self.test.clicked.connect(__test)
 

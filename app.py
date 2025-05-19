@@ -4,6 +4,7 @@ from labctrl.labconfig import LabConfig, lcfg
 from labctrl.labstat import LabStat, lstat
 
 from PyQt6.QtWidgets import QApplication, QMainWindow
+from PyQt6.QtGui import QIcon
 from labctrl.widgets.ui.labctrl import Ui_Labctrl
 from labctrl.widgets.server import FactoryServer
 from labctrl.widgets.app_button import AppButton
@@ -69,5 +70,6 @@ class Labctrl(QMainWindow, Ui_Labctrl):
 
 labctrl = QApplication(sys.argv)
 mainWindow = Labctrl(lcfg=lcfg, lstat=lstat)
+mainWindow.setWindowIcon(QIcon("./icon.ico"))
 mainWindow.show()
 sys.exit(labctrl.exec())

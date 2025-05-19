@@ -3,8 +3,9 @@ import time
 from threading import Thread
 import numpy as np
 
-from PyQt6.QtWidgets import QApplication, QMainWindow
 from PyQt6 import QtWidgets
+from PyQt6.QtWidgets import QApplication, QMainWindow
+from PyQt6.QtGui import QIcon
 
 from labctrl.labconfig import LabConfig, lcfg
 from labctrl.labstat import LabStat, lstat
@@ -186,3 +187,4 @@ else:
         sys.exit(STMBoxcar.exec())
 
     mainWindow = STMBoxcarExperiment(lcfg=lcfg, lstat=lstat)
+    mainWindow.setWindowIcon(QIcon("./apps/STMBoxcar/icon.ico"))

@@ -1,7 +1,8 @@
 import sys
 
-from PyQt6.QtWidgets import QApplication, QMainWindow
 from PyQt6 import QtWidgets
+from PyQt6.QtWidgets import QApplication, QMainWindow
+from PyQt6.QtGui import QIcon
 
 from labctrl.labconfig import LabConfig, lcfg
 from labctrl.labstat import LabStat, lstat
@@ -47,3 +48,4 @@ else:
         sys.exit(app.exec())
 
     mainWindow = LinearStageControlExperiment(lcfg=lcfg, lstat=lstat)
+    mainWindow.setWindowIcon(QIcon("./apps/linear_stage_control/icon.ico"))
