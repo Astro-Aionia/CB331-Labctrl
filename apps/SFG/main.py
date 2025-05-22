@@ -82,9 +82,9 @@ class SFGExperiment(QMainWindow, Ui_SFGExperiment):
             "Config": lcfg.config["TOPAS"][topas_name]
         }
         self.topas = factory.generate_bundle(topas_bundle_config)
-        self.topas.change_shutter()
-        time.sleep(2)
-        self.topas.change_shutter()
+        # self.topas.change_shutter()
+        # time.sleep(2)
+        # self.topas.change_shutter()
 
         factory = FactoryEMCCD(lcfg, lstat)
         detector_bundle_config = {

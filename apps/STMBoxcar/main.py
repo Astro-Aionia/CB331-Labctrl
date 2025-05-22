@@ -62,9 +62,9 @@ class STMBoxcarExperiment(QMainWindow, Ui_STMBoxcarExperiment):
             "Config": lcfg.config["TOPAS"][tp_dynamic_name]
         }
         self.tp_dynamic = factory.generate_bundle(tp_dynamic_bundle_config)
-        self.tp_dynamic.change_shutter()
-        time.sleep(0.1)
-        self.tp_dynamic.change_shutter()
+        # self.tp_dynamic.change_shutter()
+        # time.sleep(0.1)
+        # self.tp_dynamic.change_shutter()
 
         factory = FactoryTOPAS(lcfg, lstat)
         tp_static_bundle_config = {
@@ -72,9 +72,9 @@ class STMBoxcarExperiment(QMainWindow, Ui_STMBoxcarExperiment):
             "Config": lcfg.config["TOPAS"][tp_static_name]
         }
         self.tp_static = factory.generate_bundle(tp_static_bundle_config)
-        self.tp_static.change_shutter()
-        time.sleep(0.1)
-        self.tp_static.change_shutter()
+        # self.tp_static.change_shutter()
+        # time.sleep(0.1)
+        # self.tp_static.change_shutter()
 
         factory = FactoryZiUHF()
         detector_bundle_config = {

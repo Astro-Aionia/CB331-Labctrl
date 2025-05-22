@@ -44,10 +44,13 @@ class ServerWidget(QWidget, Ui_Server):
         self.test.clicked.connect(__test)
 
         def __start():
-            if "server.bat" in os.listdir(self.server_path):
-                os.system(self.server_path+"server.bat")
-            else:
-                os.system(self.server_path+"proxy.bat")
+            try:
+                if "server.bat" in os.listdir(self.server_path):
+                    os.system(f"start /d {self.server_path} cmd /k server.bat")
+                else:
+                    os.system(f"start /d {self.server_path} cmd /k proxy.bat")
+            except:
+                print("Error")
           
         self.start.clicked.connect(__start)
 
@@ -65,6 +68,6 @@ class FactoryServer:
         if name in self.generated:
             print("[SANITY] FactoryLinearStage: BundleLinearStage with name {} already generated before!".format(name))
         foo = ServerWidget(config)
-        foo.server_path = f"./servers/{device}/{name}/"
+        foo.server_path = ".\servers\{device}\{name}".format(device=device, name=name)
         self.generated[name] = foo
         return foo
