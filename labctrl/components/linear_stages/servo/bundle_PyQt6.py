@@ -8,6 +8,15 @@ from PyQt6.QtWidgets import QWidget
 from .bundle_widget import Ui_ServoStage
 from labctrl.widgets.file_dialog import FileSelect
 
+def calc_pos(pos:float, unit:str, zero_point:float):
+    if unit == "mm":
+        return pos
+    elif unit == "ps":
+        return zero_point + pos*0.299792458
+    else:
+        print("Invalid unit, the default unit mm is applied.")
+        return pos
+
 class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
     def __init__(self, bundle_config: dict, lcfg: LabConfig, lstat: LabStat, parent=None) -> None:
         QWidget.__init__(self, parent=parent)
@@ -36,6 +45,10 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
         self.lineEdit_6.setText(str(self.config["RangeScanStop"]))
         self.lineEdit_7.setText(str(self.config["RangeScanStep"]))
         self.lineEdit_9.setText(str(self.config["ScanRound"]))
+        if config["WorkingUnit"] == "ps":
+            self.label_9.setText("ps")
+            self.label_10.setText("ps")
+            self.label_15.setText("ps")
 
         if self.config["ScanMode"] == "Range":
             self.comboBox.setCurrentText("Range")
@@ -65,7 +78,8 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
 
         @update_config
         def __movepos(buttonStatus: bool):
-            response = self.remote.moveinc(float(self.lineEdit_3.text()))
+            target_distance = calc_pos(float(self.lineEdit_3.text()),config["WorkingUnit"],config["ZeroPointAbsolutePosition"]) - config["ZeroPointAbsolutePosition"]
+            response = self.remote.moveinc(target_distance)
             config["ManualPosition"] = response["position"]
             self.update_position()
             self.lstat.fmtmsg(response)
@@ -74,7 +88,8 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
 
         @update_config
         def __moveneg(buttonStatus: bool):
-            response = self.remote.moveinc(-float(self.lineEdit_3.text()))
+            target_distance = calc_pos(float(self.lineEdit_3.text()),config["WorkingUnit"],config["ZeroPointAbsolutePosition"]) - config["ZeroPointAbsolutePosition"]
+            response = self.remote.moveinc(-target_distance)
             config["ManualPosition"] = response["position"]
             self.update_position()
             self.lstat.fmtmsg(response)
@@ -83,7 +98,7 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
 
         @update_config
         def __moveabs(buttonStatus: bool):
-            config["ManualPosition"] = float(self.lineEdit_4.text())
+            config["ManualPosition"] = calc_pos(float(self.lineEdit_4.text()),config["WorkingUnit"],config["ZeroPointAbsolutePosition"])
             response = self.remote.moveabs(config["ManualPosition"])
             self.update_position()
             self.lstat.fmtmsg(response)
@@ -141,7 +156,10 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
                             if meta["TERMINATE"]:
                                 self.lstat.expmsg("[{name}][scan_range] Received signal TERMINATE, trying graceful Thread exit".format(name=name))
                                 break
-                            response = self.remote.moveabs(pos)
+                            target_position = calc_pos(pos,config["WorkingUnit"],config["ZeroPointAbsolutePosition"])
+                            response = self.remote.moveabs(target_position)
+                            config["ManualPosition"] = target_position
+                            self.update_position()
                             self.lstat.fmtmsg(response)
                             self.lstat.stat[name]["CurrentRound"] = rd
                             self.lstat.stat[name]["Delay"] = pos
