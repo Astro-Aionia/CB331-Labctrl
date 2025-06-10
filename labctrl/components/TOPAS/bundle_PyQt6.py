@@ -32,7 +32,7 @@ class BundlePyQt6TOPAS(QWidget, Ui_TOPASDemo):
         self.lineEdit_3.setText(str(config["RangeScanStop"]))
         self.lineEdit_4.setText(str(config["RangeScanStep"]))
 
-        self.pushButton.clicked.connect(lambda : self.change_shutter())
+        self.pushButton.clicked.connect(lambda : self.shutter_switch())
 
         @update_config
         def __set_wavelength():
@@ -100,20 +100,19 @@ class BundlePyQt6TOPAS(QWidget, Ui_TOPASDemo):
             """
 
             def iterate(meta=dict()):
-                for i in range(2):
-                    self.change_shutter()
-                    time.sleep(0.1)
-                    if lstat.stat[name]["ShutterIsOpen"]:
-                        lstat.expmsg("Now taking the signal...")
-                        func(meta=meta)
-                    else:
-                        lstat.expmsg("Now taking the background...")
-                        func(meta=meta)
+                self.shutter_close()
+                time.sleep(0.5)
+                lstat.expmsg("Now taking the background...")
+                func(meta=meta)
+                self.shutter_open()
+                time.sleep(0.5)
+                lstat.expmsg("Now taking the signal...")
+                func(meta=meta)
             return iterate
 
         self.shutter_swich_acquire = shutter_swich_acquire
 
-    def change_shutter(self):
+    def shutter_switch(self):
         name = self.name
         if name not in self.lstat.stat:
             self.lstat.stat[name] = dict()
@@ -121,6 +120,26 @@ class BundlePyQt6TOPAS(QWidget, Ui_TOPASDemo):
         self.lstat.fmtmsg(response)
         self.lstat.stat[name]["ShutterIsOpen"] = response["shutterIsOpen"]
         self.lstat.dump_stat("last_stat.json")
+
+    def shutter_close(self):
+        name = self.name
+        if name not in self.lstat.stat:
+            self.lstat.stat[name] = dict()
+        if self.lstat.stat[name]["ShutterIsOpen"]:
+            response = self.remote.change_shutter()
+            self.lstat.fmtmsg(response)
+            self.lstat.stat[name]["ShutterIsOpen"] = response["shutterIsOpen"]
+            self.lstat.dump_stat("last_stat.json")
+
+    def shutter_open(self):
+        name = self.name
+        if name not in self.lstat.stat:
+            self.lstat.stat[name] = dict()
+        if not self.lstat.stat[name]["ShutterIsOpen"]:
+            response = self.remote.change_shutter()
+            self.lstat.fmtmsg(response)
+            self.lstat.stat[name]["ShutterIsOpen"] = response["shutterIsOpen"]
+            self.lstat.dump_stat("last_stat.json")
 
     def update_scanlist(self, config) -> list:
         name = config["Name"]

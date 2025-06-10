@@ -8,14 +8,37 @@ from PyQt6.QtWidgets import QWidget
 from .bundle_widget import Ui_ServoStage
 from labctrl.widgets.file_dialog import FileSelect
 
-def calc_pos(pos:float, unit:str, zero_point:float):
+def calc_pos(pos:float, direction: str, unit:str, zero_point:float):
     if unit == "mm":
-        return pos
+        position = pos
     elif unit == "ps":
-        return zero_point + pos*0.299792458
+        position = pos*0.299792458
     else:
         print("Invalid unit, the default unit mm is applied.")
-        return pos
+        position = pos
+    if direction == "Positive":
+        return zero_point + position
+    elif direction == "Negative":
+        return zero_point - position
+    else:
+        print("Invalid direction, the default direction Positive is applied.")
+        return zero_point + position
+    
+def calc_dis(dis:float, direction: str, unit:str):
+    if unit == "mm":
+        distance = dis
+    elif unit == "ps":
+        distance = dis*0.299792458
+    else:
+        print("Invalid unit, the default unit mm is applied.")
+        distance = dis
+    if direction == "Positive":
+        return distance
+    elif direction == "Negative":
+        return -distance
+    else:
+        print("Invalid direction, the default direction Positive is applied.")
+        return distance
 
 class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
     def __init__(self, bundle_config: dict, lcfg: LabConfig, lstat: LabStat, parent=None) -> None:
@@ -45,10 +68,6 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
         self.lineEdit_6.setText(str(self.config["RangeScanStop"]))
         self.lineEdit_7.setText(str(self.config["RangeScanStep"]))
         self.lineEdit_9.setText(str(self.config["ScanRound"]))
-        if config["WorkingUnit"] == "ps":
-            self.label_9.setText("ps")
-            self.label_10.setText("ps")
-            self.label_15.setText("ps")
 
         if self.config["ScanMode"] == "Range":
             self.comboBox.setCurrentText("Range")
@@ -56,6 +75,17 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
             self.comboBox.setCurrentText("ExtFile")
         else:
             pass
+
+        if config["WorkingUnit"] == "mm":
+            self.workUnit.setCurrentText("mm")
+            self.label_9.setText("mm")
+            self.label_10.setText("mm")
+            self.label_15.setText("mm")
+        elif config["WorkingUnit"] == "ps":
+            self.workUnit.setCurrentText("ps")
+            self.label_9.setText("ps")
+            self.label_10.setText("ps")
+            self.label_15.setText("ps")
 
         self.filedialog = FileSelect()
         self.delay_selcet = QtWidgets.QGridLayout(self.FileDialog)
@@ -77,8 +107,18 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
         self.lineEdit_8.editingFinished.connect(__set_zero_point)
 
         @update_config
+        def __set_workunit(comboxStatus: str):
+            workunit = self.workUnit.currentText()
+            config["WorkingUnit"] = workunit
+            self.label_9.setText(workunit)
+            self.label_10.setText(workunit)
+            self.label_15.setText(workunit)
+
+        self.workUnit.currentTextChanged.connect(__set_workunit)
+
+        @update_config
         def __movepos(buttonStatus: bool):
-            target_distance = calc_pos(float(self.lineEdit_3.text()),config["WorkingUnit"],config["ZeroPointAbsolutePosition"]) - config["ZeroPointAbsolutePosition"]
+            target_distance = calc_dis(float(self.lineEdit_3.text()),config["WorkingDirection"],config["WorkingUnit"])
             response = self.remote.moveinc(target_distance)
             config["ManualPosition"] = response["position"]
             self.update_position()
@@ -88,7 +128,7 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
 
         @update_config
         def __moveneg(buttonStatus: bool):
-            target_distance = calc_pos(float(self.lineEdit_3.text()),config["WorkingUnit"],config["ZeroPointAbsolutePosition"]) - config["ZeroPointAbsolutePosition"]
+            target_distance = calc_dis(float(self.lineEdit_3.text()),config["WorkingDirection"],config["WorkingUnit"])
             response = self.remote.moveinc(-target_distance)
             config["ManualPosition"] = response["position"]
             self.update_position()
@@ -98,7 +138,7 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
 
         @update_config
         def __moveabs(buttonStatus: bool):
-            config["ManualPosition"] = calc_pos(float(self.lineEdit_4.text()),config["WorkingUnit"],config["ZeroPointAbsolutePosition"])
+            config["ManualPosition"] = calc_pos(float(self.lineEdit_4.text()),config["WorkingDirection"],config["WorkingUnit"],config["ZeroPointAbsolutePosition"])
             response = self.remote.moveabs(config["ManualPosition"])
             self.update_position()
             self.lstat.fmtmsg(response)
@@ -128,7 +168,7 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
         self.lineEdit_9.editingFinished.connect(__set_scan_round)
 
         @update_config
-        def __set_scan_list():
+        def __set_scan_list(backSignal=None):
             config["RangeScanStart"] = float(self.lineEdit_5.text())
             config["RangeScanStop"] = float(self.lineEdit_6.text())
             config["RangeScanStep"] = float(self.lineEdit_7.text())
