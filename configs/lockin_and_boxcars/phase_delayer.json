@@ -1,0 +1,7 @@
+{
+    "Name": "phase_delayer",
+    "Comment": "Phase Delayer by Kuang Chuanfu",
+    "Host": "127.0.0.1",
+    "Port": 50009,
+    "Delay": 1
+}

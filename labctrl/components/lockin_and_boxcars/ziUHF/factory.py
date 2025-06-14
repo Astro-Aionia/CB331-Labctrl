@@ -9,8 +9,6 @@ __author__ = "Zhi Zi"
 __email__ = "x@zzi.io"
 __version__ = "20211130"
 
-from http.client import responses
-
 from .remote import ProxiedUHF
 from .utils import ignore_connection_error
 

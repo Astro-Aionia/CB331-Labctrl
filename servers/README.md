@@ -45,3 +45,4 @@ By default, assigned ports start from `50001`.
 * Lock-in:
 
         UHF         50008
+        Delayer     50009
