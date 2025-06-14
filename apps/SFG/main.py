@@ -20,7 +20,8 @@ app_name = "SFG"
 app_config: dict = lcfg.config["apps"][app_name]
 delay_stage_name = app_config["DelayLine"]
 detector_name = app_config["Detector"]
-topas_name = app_config["TOPAS"]
+pump_name = app_config["Pump"]
+probe_name = app_config["Probe"]
 
 class SFGExpData:
     def __init__(self, lcfg, lstat):
@@ -33,6 +34,8 @@ class SFGExpData:
         self.xmax = np.max(self.pixels_list)
         self.ymin = np.min(self.delays)
         self.ymax = np.max(self.delays)
+        self.pump = np.zeros((len(self.delays), self.npixels), dtype=np.float64)
+        self.pumpsum = np.zeros((len(self.delays), self.npixels), dtype=np.float64)
         self.sig = np.zeros((len(self.delays), self.npixels), dtype=np.float64)
         self.sigsum = np.zeros((len(self.delays), self.npixels), dtype=np.float64)
         self.bg = np.zeros((len(self.delays), self.npixels), dtype=np.float64)
@@ -62,6 +65,12 @@ class SFGExpData:
         filename = filestem + "-Delays.csv"
         tosave = np.array(self.delays)
         np.savetxt(filename, tosave, delimiter=',')
+        filename = filestem + "-Pump.csv"
+        tosave = np.array(self.pump)
+        np.savetxt(filename, tosave, delimiter=',')
+        filename = filestem + "-Sum-Pump.csv"
+        tosave = np.array(self.pumpsum)
+        np.savetxt(filename, tosave, delimiter=',')
 
 class SFGExperiment(QMainWindow, Ui_SFGExperiment):
     def __init__(self,lcfg: LabConfig, lstat: LabStat, parent=None):
@@ -79,12 +88,16 @@ class SFGExperiment(QMainWindow, Ui_SFGExperiment):
         factory = FactoryTOPAS(lcfg, lstat)
         topas_bundle_config = {
             "BundleType": "PyQt6",
-            "Config": lcfg.config["TOPAS"][topas_name]
+            "Config": lcfg.config["TOPAS"][pump_name]
         }
-        self.topas = factory.generate_bundle(topas_bundle_config)
-        # self.topas.change_shutter()
-        # time.sleep(2)
-        # self.topas.change_shutter()
+        self.pump = factory.generate_bundle(topas_bundle_config)
+        
+        factory = FactoryTOPAS(lcfg, lstat)
+        topas_bundle_config = {
+            "BundleType": "PyQt6",
+            "Config": lcfg.config["TOPAS"][probe_name]
+        }
+        self.probe = factory.generate_bundle(topas_bundle_config)
 
         factory = FactoryEMCCD(lcfg, lstat)
         detector_bundle_config = {
@@ -110,12 +123,13 @@ class SFGExperiment(QMainWindow, Ui_SFGExperiment):
         b2.addWidget(self.message_box)
         b3 = QtWidgets.QGridLayout(self.DetectorWidget)
         b3.addWidget(self.detector)
-        b3 = QtWidgets.QGridLayout(self.TOPASWidget)
-        b3.addWidget(self.topas)
+        b4 = QtWidgets.QGridLayout(self.TOPASWidget)
+        b4.addWidget(self.pump)
+        b4.addWidget(self.probe)
 
         @self.linear_stage.scan_range
-        @self.topas.scan_range
-        @self.topas.shutter_swich_acquire
+        @self.pump.scan_range
+        @self.pump.shutter_swich_acquire
         def unit_operation(meta=dict()):
             if self.flags["TERMINATE"]:
                 meta["TERMINATE"] = True
@@ -126,7 +140,7 @@ class SFGExperiment(QMainWindow, Ui_SFGExperiment):
             sig = self.detector.acquire()
             lstat.expmsg("Adding latest signal to dataset...")
             stat = lstat.stat[delay_stage_name]
-            if lstat.stat[topas_name]["ShutterIsOpen"]:
+            if lstat.stat[pump_name]["ShutterIsOpen"]:
                 self.data.sig[stat["iDelay"], :] = sig
                 self.data.sigsum[stat["iDelay"], :] += sig
                 self.data.delta[stat["iDelay"], :] = sig - self.data.bg[stat["iDelay"], :]
@@ -136,7 +150,51 @@ class SFGExperiment(QMainWindow, Ui_SFGExperiment):
                 self.data.bgsum[stat["iDelay"], :] += sig
             if stat["iDelay"] + 1 == len(stat["ScanList"]):
                 lstat.expmsg("End of delay scan round {rd}, exporting data...".format(rd=stat["CurrentRound"]))
-                self.data.export("acq_data/" + lcfg.config["cameras"][detector_name]["FileName"] + "-Round{rd}".format(rd=stat["CurrentRound"]) + "-Pump{wv}".format(wv=lstat.stat[topas_name]["PumpWavelength"]) + ".csv")
+                self.data.export("acq_data/" + lcfg.config["cameras"][detector_name]["FileName"] + "-Round{rd}".format(rd=stat["CurrentRound"]) + "-Pump{wv}".format(wv=lstat.stat[pump_name]["PumpWavelength"]))
+            QApplication.processEvents()
+
+        @self.linear_stage.scan_range
+        @self.pump.scan_range
+        def unit_operation1(meta=dict()):
+            if self.flags["TERMINATE"]:
+                meta["TERMINATE"] = True
+                lstat.expmsg(
+                    "PumpProbe operation received signal TERMINATE, trying graceful Thread exit")
+                return
+            stat = lstat.stat[delay_stage_name]
+            # take SFG background
+            self.probe.shutter_open()
+            self.pump.shutter_close()
+            time.sleep(0.5)
+            lstat.expmsg("Retriving background from sensor...")
+            sig = self.detector.acquire()
+            lstat.expmsg("Adding latest background to dataset...")
+            self.data.bg[stat["iDelay"],:] = sig
+            self.data.bgsum[stat["iDelay"], :] += sig
+            # take SFG signal
+            self.probe.shutter_open()
+            self.pump.shutter_open()
+            time.sleep(0.5)
+            lstat.expmsg("Retriving signal from sensor...")
+            sig = self.detector.acquire()
+            lstat.expmsg("Adding latest signal to dataset...")
+            self.data.sig[stat["iDelay"], :] = sig
+            self.data.sigsum[stat["iDelay"], :] += sig
+            self.data.delta[stat["iDelay"], :] = sig - self.data.bg[stat["iDelay"], :]
+            self.data.deltasum[stat["iDelay"], :] += self.data.delta[stat["iDelay"], :]
+            # take SFG from pump as calibration
+            self.probe.shutter_close()
+            self.pump.shutter_open()
+            time.sleep(0.5)
+            lstat.expmsg("Retriving calibration from sensor...")
+            sig = self.detector.acquire()
+            lstat.expmsg("Adding latest calibration to dataset...")
+            self.data.pump[stat["iDelay"], :] = sig
+            self.data.pumpsum[stat["iDelay"], :] += sig
+            # export
+            if stat["iDelay"] + 1 == len(stat["ScanList"]):
+                lstat.expmsg("End of delay scan round {rd}, exporting data...".format(rd=stat["CurrentRound"]))
+                self.data.export("acq_data/" + lcfg.config["cameras"][detector_name]["FileName"] + "-Round{rd}".format(rd=stat["CurrentRound"]) + "-Pump{wv}".format(wv=lstat.stat[pump_name]["PumpWavelength"]))
             QApplication.processEvents()
 
         def task():
@@ -146,7 +204,7 @@ class SFGExperiment(QMainWindow, Ui_SFGExperiment):
             self.detector.reset()
             meta = dict()
             meta["TERMINATE"] = False
-            unit_operation(meta=meta)
+            unit_operation1(meta=meta)
             self.flags["FINISH"] = True
             self.flags["RUNNING"] = False
             lstat.expmsg("Experiment done")

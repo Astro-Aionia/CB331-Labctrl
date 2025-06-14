@@ -3,5 +3,6 @@
     "Comment": "High-resolution, board band surface vibrational sum-frequency generation. A extra ps IR pump to make vibrational coherence and 2D spectroscopy.",
     "DelayLine": "servo",
     "Detector": "EMCCD",
-    "TOPAS": "T23233P"
+    "Pump": "T23233P",
+    "Probe": "T23231P"
 }

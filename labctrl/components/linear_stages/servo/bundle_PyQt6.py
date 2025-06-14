@@ -196,7 +196,7 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
                             if meta["TERMINATE"]:
                                 self.lstat.expmsg("[{name}][scan_range] Received signal TERMINATE, trying graceful Thread exit".format(name=name))
                                 break
-                            target_position = calc_pos(pos,config["WorkingUnit"],config["ZeroPointAbsolutePosition"])
+                            target_position = calc_pos(pos,config["WorkingDirection"],config["WorkingUnit"],config["ZeroPointAbsolutePosition"])
                             response = self.remote.moveabs(target_position)
                             config["ManualPosition"] = target_position
                             self.update_position()
