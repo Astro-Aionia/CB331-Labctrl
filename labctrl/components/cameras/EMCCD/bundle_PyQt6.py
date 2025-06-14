@@ -1,5 +1,3 @@
-from http.client import responses
-
 from labctrl.labconfig import LabConfig
 from labctrl.labstat import LabStat
 from .remote import RemoteEMCCD
@@ -9,6 +7,7 @@ from PyQt6.QtWidgets import QWidget
 from .bundle_widget import Ui_EMCCD
 from labctrl.widgets.canvas import CanvasWidget
 
+import os
 import numpy as np
 
 class BundlePyQt6EMCCD(QWidget, Ui_EMCCD):
@@ -35,6 +34,8 @@ class BundlePyQt6EMCCD(QWidget, Ui_EMCCD):
         self.pushButton_3.clicked.connect(lambda : self.close())
         self.pushButton_2.clicked.connect(lambda : self.clean())
         self.pushButton_1.clicked.connect(lambda : self.acquire())
+        self.pushButton_4.clicked.connect(lambda : self.open_save_data())
+        self.pushButton_5.clicked.connect(lambda: self.open_raw())
 
         @update_config
         def __set_filename():
@@ -65,6 +66,11 @@ class BundlePyQt6EMCCD(QWidget, Ui_EMCCD):
         self.canvas.update_plot(data[:,0],data[:,1])
         return data[:,1]
 
+    def open_save_data(self):
+        os.startfile(os.getcwd()+r"\acq_data")
+
+    def open_raw(self):
+        os.startfile(os.getcwd() + r"\servers\cameras\EMCCD\raw")
 
 
 
