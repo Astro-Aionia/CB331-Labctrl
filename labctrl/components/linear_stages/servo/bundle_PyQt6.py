@@ -10,25 +10,27 @@ from labctrl.widgets.file_dialog import FileSelect
 
 def calc_pos(pos:float, direction: str, unit:str, zero_point:float):
     if unit == "mm":
+        zp = 0
         position = pos
     elif unit == "ps":
-        position = pos*0.299792458
+        zp = zero_point
+        position = pos*0.299792458/2
     else:
         print("Invalid unit, the default unit mm is applied.")
         position = pos
     if direction == "Positive":
-        return zero_point + position
+        return zp + position
     elif direction == "Negative":
-        return zero_point - position
+        return zp - position
     else:
         print("Invalid direction, the default direction Positive is applied.")
-        return zero_point + position
+        return zp + position
     
 def calc_dis(dis:float, direction: str, unit:str):
     if unit == "mm":
         distance = dis
     elif unit == "ps":
-        distance = dis*0.299792458
+        distance = dis*0.299792458/2
     else:
         print("Invalid unit, the default unit mm is applied.")
         distance = dis

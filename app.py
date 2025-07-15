@@ -9,6 +9,7 @@ from labctrl.widgets.ui.labctrl import Ui_Labctrl
 from labctrl.widgets.server import FactoryServer
 from labctrl.widgets.app_button import AppButton
 
+
 class Labctrl(QMainWindow, Ui_Labctrl):
     def __init__(self, lcfg: LabConfig, lstat: LabStat, parent=None):
         QMainWindow.__init__(self, parent=parent)
@@ -59,7 +60,8 @@ class Labctrl(QMainWindow, Ui_Labctrl):
                 "Class": "lockin_and_boxcars",
                 "Name": item
             }
-            self.lockin_and_boxcars.append(factory.generate_bundle(bundle_config))
+            self.lockin_and_boxcars.append(
+                factory.generate_bundle(bundle_config))
             self.lockin_and_boxcar_group.addWidget(self.lockin_and_boxcars[i])
 
         self.apps = []
@@ -67,6 +69,7 @@ class Labctrl(QMainWindow, Ui_Labctrl):
         for i, item in enumerate(lcfg.config["apps"]):
             self.apps.append(AppButton(app_name=item))
             self.app_group.addWidget(self.apps[i])
+
 
 labctrl = QApplication(sys.argv)
 mainWindow = Labctrl(lcfg=lcfg, lstat=lstat)
