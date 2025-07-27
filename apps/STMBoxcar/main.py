@@ -110,14 +110,14 @@ class STMBoxcarExperiment(QMainWindow, Ui_STMBoxcarExperiment):
         b4.addWidget(self.tp_static)
         b5 = QtWidgets.QGridLayout(self.WaveCurveWidget)
         b5.addWidget(self.canvas_wv)
-        self.lineEdit_2.setText(str(lcfg.config["apps"][app_name]["AveragingTime"]))
+        self.lineEdit_2.setText(str(lcfg.config["apps"][app_name]["AveragingCounts"]))
 
         @lcfg.update_config
-        def __set_averaging_time():
-            lcfg.config["apps"][app_name]["AveragingTime"] = float(self.lineEdit_2.text())
-            lstat.expmsg("Averaging time set to {at:.3f} s".format(at=lcfg.config["apps"][app_name]["AveragingTime"]))
+        def __set_averaging_counts():
+            lcfg.config["apps"][app_name]["AveragingCounts"] = int(self.lineEdit_2.text())
+            lstat.expmsg("Averaging count set to {at}.".format(at=lcfg.config["apps"][app_name]["AveragingCounts"]))
 
-        self.lineEdit_2.editingFinished.connect(__set_averaging_time)
+        self.lineEdit_2.editingFinished.connect(__set_averaging_counts)
 
         @self.linear_stage.scan_range
         @self.tp_dynamic.scan_range
@@ -129,7 +129,7 @@ class STMBoxcarExperiment(QMainWindow, Ui_STMBoxcarExperiment):
                 return
             lstat.expmsg("Retriving signal from sensor...")
             # time.sleep(1)
-            sig = self.boxcar.get_value(averaging_time=lcfg.config["apps"][app_name]["AveragingTime"])
+            sig = self.boxcar.get_value(averaging_counts=lcfg.config["apps"][app_name]["AveragingCounts"])
             lstat.expmsg("Adding latest signal to dataset...")
             stat = lstat.stat[delay_stage_name]
             self.data.sig[stat["iDelay"], lstat.stat[tp_dynamic_name]["iPumpWavelength"]] = sig

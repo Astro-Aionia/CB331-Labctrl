@@ -26,9 +26,9 @@ def online():
     return Response(res, status=200, mimetype='application/json')
 
 
-@app.route("/get_value/<averaging_time>")
-def get_value(averaging_time):
-    value, count = uhf.get_value(averaging_time=float(averaging_time))
+@app.route("/get_value/<averaging_counts>")
+def get_value(averaging_counts):
+    value, count = uhf.get_value(averaging_counts=int(averaging_counts))
     res = dict()
     res['success'] = True
     res['message'] = "value:float"

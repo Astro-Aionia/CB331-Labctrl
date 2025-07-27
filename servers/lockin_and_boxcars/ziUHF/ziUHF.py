@@ -20,8 +20,8 @@ cfg = {
     "ServerHost": "127.0.0.1",
     # "ServerHost": "192.168.1.149",
     "ServerPort": 8004,
-    # "SamplePath": "/dev2461/boxcars/0/sample"
-    "SamplePath": "/dev20014/auxouts/0/value",
+    "SamplePath": "/dev20014/boxcars/0/sample"
+    # "SamplePath": "/dev20014/auxouts/0/value",
     # "BackgroundSamplePath": "/dev2819/boxcars/1/sample"
 }
 
@@ -48,21 +48,23 @@ class ziUHF:
         # self.daq.subscribe(cfg["BackgroundSamplePath"])
 
 
-    def get_value(self, averaging_time=0.1):
+    def get_value(self, averaging_counts: int = 50):
         # flush old streaming data that is still in the buffer
         self.daq.flush()
-        tnow = time.time_ns()
-        tuntil = tnow + averaging_time * 10e9
+        # tnow = time.time_ns()
+        # tuntil = tnow + averaging_time * 10e9
         datas = list()
-        while time.time_ns() < tuntil:
+        # while time.time_ns() < tuntil:
+        for i in range(averaging_counts):
             # Poll the data
-            poll_length = 0.1  # [s]
+            poll_length = 1e-6  # [s]
             poll_timeout = 500  # [ms]
             poll_flags = 0
             poll_return_flat_dict = True
             data = self.daq.poll(poll_length, poll_timeout,
                                  poll_flags, poll_return_flat_dict)
             datas.append(data)
+            # print(data)
 
         s = 0
         cnt = 0

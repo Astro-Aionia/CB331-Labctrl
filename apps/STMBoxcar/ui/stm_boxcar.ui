@@ -190,7 +190,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Average time:</string>
+     <string>Average counts:</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="lineEdit_2">

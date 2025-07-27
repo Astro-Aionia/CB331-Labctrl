@@ -115,4 +115,4 @@ class Ui_STMBoxcarExperiment(object):
         self.label.setText(_translate("STMBoxcarExperiment", "Saved File Name:"))
         self.pushButton_1.setText(_translate("STMBoxcarExperiment", "Start"))
         self.pushButton_2.setText(_translate("STMBoxcarExperiment", "Stop"))
-        self.label_2.setText(_translate("STMBoxcarExperiment", "Average time:"))
+        self.label_2.setText(_translate("STMBoxcarExperiment", "Average counts:"))
