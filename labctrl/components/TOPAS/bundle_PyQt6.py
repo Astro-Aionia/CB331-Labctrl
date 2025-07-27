@@ -25,6 +25,7 @@ class BundlePyQt6TOPAS(QWidget, Ui_TOPASDemo):
 
         # UI setup and initialize parameters
         self.setupUi(self)
+        self.label_1.setText(self.name)
         self.comboBox_1.setCurrentText(config["ManualInteraction"])
         self.comboBox_2.setCurrentText(config["ScanMode"])
         self.lineEdit_1.setText(str(config["ManualTarget"]))

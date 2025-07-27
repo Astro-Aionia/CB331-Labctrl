@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1337</width>
-    <height>808</height>
+    <width>1382</width>
+    <height>931</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <rect>
       <x>9</x>
       <y>9</y>
-      <width>553</width>
+      <width>601</width>
       <height>392</height>
      </rect>
     </property>
@@ -28,9 +28,9 @@
     <property name="geometry">
      <rect>
       <x>9</x>
-      <y>418</y>
+      <y>448</y>
       <width>553</width>
-      <height>381</height>
+      <height>471</height>
      </rect>
     </property>
    </widget>
@@ -38,19 +38,19 @@
     <property name="geometry">
      <rect>
       <x>568</x>
-      <y>348</y>
-      <width>761</width>
-      <height>451</height>
+      <y>408</y>
+      <width>801</width>
+      <height>511</height>
      </rect>
     </property>
    </widget>
    <widget class="QWidget" name="TOPASWidget" native="true">
     <property name="geometry">
      <rect>
-      <x>570</x>
+      <x>620</x>
       <y>10</y>
       <width>751</width>
-      <height>330</height>
+      <height>391</height>
      </rect>
     </property>
    </widget>
@@ -58,10 +58,16 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>400</y>
+      <y>410</y>
       <width>75</width>
-      <height>23</height>
+      <height>31</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
     <property name="font">
      <font>
@@ -77,10 +83,16 @@
     <property name="geometry">
      <rect>
       <x>90</x>
-      <y>400</y>
+      <y>410</y>
       <width>75</width>
-      <height>23</height>
+      <height>31</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
     <property name="font">
      <font>

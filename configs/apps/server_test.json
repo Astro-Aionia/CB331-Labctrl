@@ -1,0 +1,7 @@
+{
+    "Name": "server_test",
+    "Comment": "Test configuration for server applications",
+    "Host": "127.0.0.1",
+    "Port": 50000,
+    "Command": ""
+}

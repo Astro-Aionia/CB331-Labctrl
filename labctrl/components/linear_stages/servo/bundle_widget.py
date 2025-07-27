@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'bundle_widget.ui'
+# Form implementation generated from reading ui file 'c:\Users\zhenggroup\Python\CB331\labctrl\components\linear_stages\servo\bundle_widget.ui'
 #
 # Created by: PyQt6 UI code generator 6.4.2
 #
@@ -12,7 +12,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_ServoStage(object):
     def setupUi(self, ServoStage):
         ServoStage.setObjectName("ServoStage")
-        ServoStage.resize(560, 374)
+        ServoStage.resize(634, 380)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -87,11 +87,12 @@ class Ui_ServoStage(object):
         self.label_4.setObjectName("label_4")
         self.horizontalLayout_2.addWidget(self.label_4)
         self.lineEdit_2 = QtWidgets.QLineEdit(parent=ServoStage)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Maximum, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lineEdit_2.sizePolicy().hasHeightForWidth())
         self.lineEdit_2.setSizePolicy(sizePolicy)
+        self.lineEdit_2.setMaximumSize(QtCore.QSize(50, 16777215))
         font = QtGui.QFont()
         font.setFamily("Consolas")
         font.setPointSize(11)
@@ -318,6 +319,7 @@ class Ui_ServoStage(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lineEdit_1.sizePolicy().hasHeightForWidth())
         self.lineEdit_1.setSizePolicy(sizePolicy)
+        self.lineEdit_1.setMinimumSize(QtCore.QSize(80, 0))
         font = QtGui.QFont()
         font.setFamily("Consolas")
         font.setPointSize(11)
@@ -419,6 +421,7 @@ class Ui_ServoStage(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label_18.sizePolicy().hasHeightForWidth())
         self.label_18.setSizePolicy(sizePolicy)
+        self.label_18.setMinimumSize(QtCore.QSize(0, 0))
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(True)
@@ -431,6 +434,8 @@ class Ui_ServoStage(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lineEdit_8.sizePolicy().hasHeightForWidth())
         self.lineEdit_8.setSizePolicy(sizePolicy)
+        self.lineEdit_8.setMinimumSize(QtCore.QSize(80, 0))
+        self.lineEdit_8.setMaximumSize(QtCore.QSize(80, 16777215))
         font = QtGui.QFont()
         font.setFamily("Consolas")
         font.setPointSize(11)
@@ -484,5 +489,5 @@ class Ui_ServoStage(object):
         self.label_13.setText(_translate("ServoStage", "To"))
         self.label_12.setText(_translate("ServoStage", "From"))
         self.label_16.setText(_translate("ServoStage", "External Delay List"))
-        self.label_18.setText(_translate("ServoStage", "Zero-point"))
+        self.label_18.setText(_translate("ServoStage", "Zero-point:"))
         self.label_19.setText(_translate("ServoStage", "mm"))

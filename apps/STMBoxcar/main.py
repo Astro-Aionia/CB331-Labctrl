@@ -29,8 +29,9 @@ class STMBoxcarExpData:
         self.lcfg = lcfg
         self.stat = lstat
         self.delays = lstat.stat[delay_stage_name]["ScanList"]
-        self.sig = np.zeros((len(self.delays), 1), dtype=np.float64)
-        self.sigsum = np.zeros((len(self.delays), 1), dtype=np.float64)
+        self.wvs = lstat.stat[tp_dynamic_name]["ScanList"]
+        self.sig = np.zeros((len(self.delays), len(self.wvs)), dtype=np.float64)
+        self.sigsum = np.zeros((len(self.delays), len(self.wvs)), dtype=np.float64)
 
     def export(self, filestem: str) -> None:
         filename = filestem + "-Signal.csv"
@@ -93,7 +94,8 @@ class STMBoxcarExperiment(QMainWindow, Ui_STMBoxcarExperiment):
             "FINISH": False,
         }
 
-        self.canvas = CanvasWidget()
+        self.canvas_delay = CanvasWidget()
+        self.canvas_wv = CanvasWidget()
 
         # setup UI
         b1 = QtWidgets.QGridLayout(self.StageWidget)
@@ -101,10 +103,16 @@ class STMBoxcarExperiment(QMainWindow, Ui_STMBoxcarExperiment):
         b2 = QtWidgets.QGridLayout(self.MessageWidget)
         b2.addWidget(self.message_box)
         b3 = QtWidgets.QGridLayout(self.DelayCurveWidget)
-        b3.addWidget(self.canvas)
+        b3.addWidget(self.canvas_delay)
         self.lineEdit.setText(lcfg.config["apps"][app_name]["SaveFileName"])
+        b4 = QtWidgets.QGridLayout(self.TOPASWidget)
+        b4.addWidget(self.tp_dynamic)
+        b4.addWidget(self.tp_static)
+        b5 = QtWidgets.QGridLayout(self.WaveCurveWidget)
+        b5.addWidget(self.canvas_wv)
 
         @self.linear_stage.scan_range
+        @self.tp_dynamic.scan_range
         def unit_operation(meta=dict()):
             if self.flags["TERMINATE"]:
                 meta["TERMINATE"] = True
@@ -112,15 +120,17 @@ class STMBoxcarExperiment(QMainWindow, Ui_STMBoxcarExperiment):
                     "PumpProbe operation received signal TERMINATE, trying graceful Thread exit")
                 return
             lstat.expmsg("Retriving signal from sensor...")
+            time.sleep(1)
             sig = self.boxcar.get_value()
             lstat.expmsg("Adding latest signal to dataset...")
             stat = lstat.stat[delay_stage_name]
-            self.data.sig[stat["iDelay"], :] = sig
-            self.data.sigsum[stat["iDelay"], :] += sig
-            self.canvas.update_plot(self.data.delays[:stat["iDelay"]+1], self.data.sig[:stat["iDelay"]+1, 0])
+            self.data.sig[stat["iDelay"], lstat.stat[tp_dynamic_name]["iPumpWavelength"]] = sig
+            self.data.sigsum[stat["iDelay"], lstat.stat[tp_dynamic_name]["iPumpWavelength"]] += sig
+            self.canvas_delay.update_plot(self.data.delays[:stat["iDelay"]+1], self.data.sig[:stat["iDelay"]+1, 0])
+            self.canvas_wv.update_plot(self.data.wvs[:lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1], self.data.sig[stat["iDelay"], :lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1])
             if stat["iDelay"] + 1 == len(stat["ScanList"]):
                 lstat.expmsg("End of delay scan round {rd}, exporting data...".format(rd=stat["CurrentRound"]))
-                self.data.export("acq_data/" + self.lineEdit.text() + "-Round{rd}".format(rd=stat["CurrentRound"]) + ".csv")
+                self.data.export("acq_data/" + self.lineEdit.text() + "-Round{rd}".format(rd=stat["CurrentRound"]))
             QApplication.processEvents()
 
         def task():
@@ -151,23 +161,23 @@ class STMBoxcarExperiment(QMainWindow, Ui_STMBoxcarExperiment):
 
         self.pushButton_2.clicked.connect(__stop)
 
-        def __tp_static_shutter():
-            self.tp_static.change_shutter()
-            if lstat.stat[tp_static_name]["ShutterIsOpen"]:
-                self.lineEdit_1.setText("On")
-            else:
-                self.lineEdit_1.setText("Off")
+        # def __tp_static_shutter():
+        #     self.tp_static.change_shutter()
+        #     if lstat.stat[tp_static_name]["ShutterIsOpen"]:
+        #         self.lineEdit_1.setText("On")
+        #     else:
+        #         self.lineEdit_1.setText("Off")
 
-        self.pushButton_3.clicked.connect(__tp_static_shutter)
+        # self.pushButton_3.clicked.connect(__tp_static_shutter)
 
-        def __tp_dynamic_shutter():
-            self.tp_dynamic.change_shutter()
-            if lstat.stat[tp_dynamic_name]["ShutterIsOpen"]:
-                self.lineEdit_2.setText("On")
-            else:
-                self.lineEdit_2.setText("Off")
+        # def __tp_dynamic_shutter():
+        #     self.tp_dynamic.change_shutter()
+        #     if lstat.stat[tp_dynamic_name]["ShutterIsOpen"]:
+        #         self.lineEdit_2.setText("On")
+        #     else:
+        #         self.lineEdit_2.setText("Off")
 
-        self.pushButton_4.clicked.connect(__tp_dynamic_shutter)
+        # self.pushButton_4.clicked.connect(__tp_dynamic_shutter)
 
         def __set_filename():
             lcfg.config["apps"][app_name]["SaveFileName"] = self.lineEdit.text()
