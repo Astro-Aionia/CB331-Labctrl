@@ -63,6 +63,7 @@ class ServerTestExperiment(QMainWindow, Ui_serverTest):
         try:
             time = datetime.datetime.now().strftime("%H:%M:%S")
             self.resWidget.append(f"[{time}] Sending: http://{self.host}:{self.port}/{self.command}")
+            QApplication.processEvents()
             response = requests.get(f"http://{self.host}:{self.port}/{self.command}")
             rc = response.content.decode()
             if json.loads(rc)["success"]:
@@ -74,6 +75,7 @@ class ServerTestExperiment(QMainWindow, Ui_serverTest):
                 time = datetime.datetime.now().strftime("%H:%M:%S")
                 self.resWidget.append(f"[{time}] Failed.")
             self.resWidget.append(" ")
+            QApplication.processEvents()
         except requests.exceptions.ConnectionError as err:
             print(err)
 

@@ -75,7 +75,7 @@ class ziUHF:
         val = s/cnt
         print(f"Total sample count is {cnt}.")
         print(f"Measured average amplitude is {val:.5e} V.")
-        return val
+        return val, cnt
     
     def get_data(self, averaging_time=0.1):
         self.daq.flush()

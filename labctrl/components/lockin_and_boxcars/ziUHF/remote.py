@@ -38,5 +38,5 @@ class ProxiedUHF():
         Does not test if the remote server actually works, however."""
         return self.apicall('')
 
-    def get_value(self):
-        return self.apicall('get_value')
+    def get_value(self, averaging_time=0.1):
+        return self.apicall('get_value/{:.6f}'.format(averaging_time))

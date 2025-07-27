@@ -56,8 +56,8 @@ class FactoryZiUHF:
         
         bundle.pushButton.clicked.connect(__manual_take_sample)
 
-        def __get_value():
-            value = remote.get_value()
+        def __get_value(averaging_time=0.1):
+            value = remote.get_value(averaging_time)
             value = value["value"]
             return float(value)
 
