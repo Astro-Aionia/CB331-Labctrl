@@ -12,16 +12,16 @@ __version__ = "20211130"
 import time
 import numpy as np
 import zhinst.utils
-from numpy.ma.core import shape
 
 cfg = {
+    # "DeviceID": "dev2461",
     "DeviceID": "dev20014",
     "APILevel": 6,
+    # "ServerHost": "localhost",
     "ServerHost": "127.0.0.1",
-    # "ServerHost": "192.168.1.149",
     "ServerPort": 8004,
     # "SamplePath": "/dev2461/boxcars/0/sample"
-    "SamplePath": "/dev20014/auxouts/0/value",
+    "SamplePath": "/dev20014/boxcars/0/sample",
     # "BackgroundSamplePath": "/dev2819/boxcars/1/sample"
 }
 
@@ -97,7 +97,6 @@ class ziUHF:
             try:
                 sample = data[cfg["SamplePath"]]
                 value = sample["value"]
-                print(len(value))
                 s = np.concatenate((s, value))
             except KeyError:
                 pass
@@ -105,7 +104,7 @@ class ziUHF:
         #     sample = data[cfg["BackgroundSamplePath"]]
         #     value = sample["value"]
         #     s = np.concatenate((s, value))
-        return s.tolist()
+        return s
 
 uhf = ziUHF()
 uhf.init_session()
