@@ -8,19 +8,29 @@ from labctrl.labstat import LabStat
 from labctrl.labconfig import LabConfig
 
 class ServerWidget(QWidget, Ui_Server):
-    def __init__(self, config, parent=None):
+    def __init__(self, bundle_config: dict, lcfg: LabConfig, parent=None):
         QWidget.__init__(self, parent=parent)
         self.setupUi(self)
+
+        self.lcfg = lcfg
+        device = bundle_config["Class"]
+        name = bundle_config["Name"]
+        config = self.lcfg.config[device][name]
+
         self.name.setText(config["Name"])
         self.host.setText(config["Host"])
         self.port.setText(str(config["Port"]))
         self.server_path = ''
 
+        update_config = self.lcfg.update_config
+
+        @update_config
         def __set_host():
             config["Host"] = self.host.text()
 
         self.host.editingFinished.connect(__set_host)
 
+        @update_config
         def __set_port():
             config["Port"] = int(self.port.text())
 
@@ -64,10 +74,9 @@ class FactoryServer:
         device = bundle_config["Class"]
         name = bundle_config["Name"]
         config = self.lcfg.config[device][name]
-        name = bundle_config["Name"]
         if name in self.generated:
-            print("[SANITY] FactoryLinearStage: BundleLinearStage with name {} already generated before!".format(name))
-        foo = ServerWidget(config)
+            print("[SANITY] FactoryServer: BundleServer with name {} already generated before!".format(name))
+        foo = ServerWidget(bundle_config, self.lcfg)
         foo.server_path = ".\servers\{device}\{name}".format(device=device, name=name)
         self.generated[name] = foo
         return foo
