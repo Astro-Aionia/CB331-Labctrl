@@ -128,7 +128,7 @@ class STMBoxcarExperiment(QMainWindow, Ui_STMBoxcarExperiment):
                     "PumpProbe operation received signal TERMINATE, trying graceful Thread exit")
                 return
             lstat.expmsg("Retriving signal from sensor...")
-            # time.sleep(1)
+            time.sleep(1)
             sig = self.boxcar.get_value(averaging_time=lcfg.config["apps"][app_name]["AveragingTime"])
             lstat.expmsg("Adding latest signal to dataset...")
             stat = lstat.stat[delay_stage_name]
