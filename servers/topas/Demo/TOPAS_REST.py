@@ -47,7 +47,7 @@ class Topas4Controller:
 
     def setWavelength(self, interaction, wavelength) -> bool:
         print("Setting wavelength to {wv} with interaction {interaction}".format(wv=wavelength, interaction=interaction['Type']))
-        if interaction['OutputRange']['From'] < wavelength < interaction['OutputRange']['To']:
+        if interaction['OutputRange']['From'] <= wavelength <= interaction['OutputRange']['To']:
             response = self.put('/Optical/WavelengthControl/SetWavelength', {'Interaction':interaction['Type'], 'Wavelength':wavelength})
             self.waitTillWavelengthIsSet()
             print("Wavelength set, response:", response)
