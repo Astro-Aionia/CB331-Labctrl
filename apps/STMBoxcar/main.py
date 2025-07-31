@@ -103,7 +103,7 @@ class STMBoxcarExperiment(QMainWindow, Ui_STMBoxcarExperiment):
         }
 
         self.canvas_delay = CanvasWidget(ax_num=2, xlabel="Delay (ps)", ylabel=["Signal", "Reference"])
-        self.canvas_wv = CanvasWidget(ax_num=1, xlabel="Wavelength (nm)", ylabel=["Signal"])
+        self.canvas_wv = CanvasWidget(ax_num=2, xlabel="Wavelength (nm)", ylabel=["Signal", "Reference"])
 
         # setup UI
         b1 = QtWidgets.QGridLayout(self.StageWidget)
@@ -148,10 +148,10 @@ class STMBoxcarExperiment(QMainWindow, Ui_STMBoxcarExperiment):
             self.data.refsum[stat["iDelay"], lstat.stat[tp_dynamic_name]["iPumpWavelength"]] += ref
             
             new_delay_data = [[self.data.delays[:stat["iDelay"]+1], self.data.sig[:stat["iDelay"]+1, 0]], [self.data.delays[:stat["iDelay"]+1], self.data.ref[:stat["iDelay"]+1, 0]]]
-            new_wv_data = [[self.data.wvs[:lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1], self.data.sig[stat["iDelay"], :lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1]]]
+            new_wv_data = [[self.data.wvs[:lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1], self.data.sig[stat["iDelay"], :lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1]], [self.data.wvs[:lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1], self.data.ref[stat["iDelay"], :lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1]]]
 
             self.canvas_delay.update_plot(new_delay_data, labels=["Signal", "Reference"])
-            self.canvas_wv.update_plot(new_wv_data, labels=["Signal"])
+            self.canvas_wv.update_plot(new_wv_data, labels=["Signal, Reference"])
             # self.canvas_wv.update_plot(self.data.wvs[:lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1], self.data.sig[stat["iDelay"], :lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1])
             if stat["iDelay"] + 1 == len(stat["ScanList"]):
                 lstat.expmsg("End of delay scan round {rd}, exporting data...".format(rd=stat["CurrentRound"]))

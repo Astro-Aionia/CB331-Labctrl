@@ -212,7 +212,8 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
                     self.lstat.stat[name]["CurrentRound"] = 0
                     self.lstat.stat[name]["Delay"] = "ManualDelay"
                     self.lstat.stat[name]["iDelay"] = 0
-                    func(meta=meta)
+                    for round in range(round):
+                        func(meta=meta)
 
             return iterate
 
