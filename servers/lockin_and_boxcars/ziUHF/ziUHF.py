@@ -22,7 +22,7 @@ cfg = {
     "ServerPort": 8004,
     # "SamplePath": "/dev2461/boxcars/0/sample"
     "SamplePath": "/dev20014/boxcars/0/sample",
-    # "BackgroundSamplePath": "/dev2819/boxcars/1/sample"
+    "BackgroundSamplePath": "/dev20014/boxcars/1/sample"
 }
 
 
@@ -45,7 +45,7 @@ class ziUHF:
         )
         zhinst.utils.api_server_version_check(self.daq)
         self.daq.subscribe(cfg["SamplePath"])
-        # self.daq.subscribe(cfg["BackgroundSamplePath"])
+        self.daq.subscribe(cfg["BackgroundSamplePath"])
 
 
     def get_value(self, averaging_time=0.1):
@@ -65,18 +65,40 @@ class ziUHF:
             datas.append(data)
 
         s = 0
-        cnt = 0
-        for data in datas:
-            sample = data[cfg["SamplePath"]]
-            value = sample["value"]
-            s = s + np.sum(value)
-            cnt = cnt + np.size(value)
+        cnt_s = 0
+        r = 0
+        cnt_r = 0
 
-        val = s/cnt
-        print(f"Total sample count is {cnt}.")
-        print(f"Measured average amplitude is {val:.5e} V.")
-        return val, cnt
-    
+        for data in datas:
+            try:
+                sample = data[cfg["SamplePath"]]
+                value = sample["value"]
+                s = s + np.sum(value)
+                cnt_s = cnt_s + np.size(value)
+            except KeyError:
+                pass
+            try:
+                reference = data[cfg["BackgroundSamplePath"]]
+                value = reference["value"]
+                r = r + np.sum(value)
+                cnt_r = cnt_r + np.size(value)
+            except KeyError:
+                pass
+
+        try:
+            val = s/cnt_s
+        except ZeroDivisionError:
+            print("No sample data received.")
+            val = 0.0
+        try:
+            ref = r/cnt_r
+        except ZeroDivisionError:
+            print("No reference data received.")
+            ref = 0.0
+        print(f"Total sample count is {cnt_s}, {cnt_r}.")
+        print(f"Measured average amplitude is {val:.5e} V, {ref:.5e}. V.")
+        return val, ref
+
     def get_data(self, averaging_time=0.1):
         self.daq.flush()
         tnow = time.time_ns()
@@ -93,6 +115,7 @@ class ziUHF:
             datas.append(data)
         # print(datas)
         s = []
+        r = []
         for data in datas:
             try:
                 sample = data[cfg["SamplePath"]]
@@ -100,11 +123,22 @@ class ziUHF:
                 s = np.concatenate((s, value))
             except KeyError:
                 pass
+            try:
+                reference = data[cfg["BackgroundSamplePath"]]
+                value = reference["value"]
+                r = np.concatenate((r, value))
+            except KeyError:
+                pass
         # for data in datas:
         #     sample = data[cfg["BackgroundSamplePath"]]
         #     value = sample["value"]
         #     s = np.concatenate((s, value))
-        return s
+        return s, r
 
 uhf = ziUHF()
 uhf.init_session()
+
+#  test code
+if __name__ == "__main__":
+    s, r = uhf.get_value(averaging_time=0.1)
+    print(s, r)

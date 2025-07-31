@@ -57,7 +57,7 @@
      <rect>
       <x>10</x>
       <y>410</y>
-      <width>1111</width>
+      <width>931</width>
       <height>511</height>
      </rect>
     </property>
@@ -161,9 +161,9 @@
    <widget class="QWidget" name="WaveCurveWidget" native="true">
     <property name="geometry">
      <rect>
-      <x>1130</x>
+      <x>950</x>
       <y>410</y>
-      <width>751</width>
+      <width>931</width>
       <height>511</height>
      </rect>
     </property>

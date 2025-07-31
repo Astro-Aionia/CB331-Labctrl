@@ -32,6 +32,8 @@ class STMBoxcarExpData:
         self.wvs = lstat.stat[tp_dynamic_name]["ScanList"]
         self.sig = np.zeros((len(self.delays), len(self.wvs)), dtype=np.float64)
         self.sigsum = np.zeros((len(self.delays), len(self.wvs)), dtype=np.float64)
+        self.ref = np.zeros((len(self.delays), len(self.wvs)), dtype=np.float64)
+        self.refsum = np.zeros((len(self.delays), len(self.wvs)), dtype=np.float64)
 
     def export(self, filestem: str) -> None:
         filename = filestem + "-Signal.csv"
@@ -39,6 +41,12 @@ class STMBoxcarExpData:
         np.savetxt(filename, tosave, delimiter=',')
         filename = filestem + "-Sum-Signal.csv"
         tosave = self.sigsum
+        np.savetxt(filename, tosave, delimiter=',')
+        filename = filestem + "-Ref.csv"
+        tosave = self.ref
+        np.savetxt(filename, tosave, delimiter=',')
+        filename = filestem + "-Sum-Ref.csv"
+        tosave = self.refsum
         np.savetxt(filename, tosave, delimiter=',')
         filename = filestem + "-Delays.csv"
         tosave = np.array(self.delays)
@@ -129,13 +137,18 @@ class STMBoxcarExperiment(QMainWindow, Ui_STMBoxcarExperiment):
                 return
             lstat.expmsg("Retriving signal from sensor...")
             time.sleep(1)
-            sig = self.boxcar.get_value(averaging_time=lcfg.config["apps"][app_name]["AveragingTime"])
+            value = self.boxcar.get_value(averaging_time=lcfg.config["apps"][app_name]["AveragingTime"])
+            sig = value[0]
+            ref = value[1]
             lstat.expmsg("Adding latest signal to dataset...")
             stat = lstat.stat[delay_stage_name]
             self.data.sig[stat["iDelay"], lstat.stat[tp_dynamic_name]["iPumpWavelength"]] = sig
             self.data.sigsum[stat["iDelay"], lstat.stat[tp_dynamic_name]["iPumpWavelength"]] += sig
+            self.data.ref[stat["iDelay"], lstat.stat[tp_dynamic_name]["iPumpWavelength"]] = ref
+            self.data.refsum[stat["iDelay"], lstat.stat[tp_dynamic_name]["iPumpWavelength"]] += ref
             self.canvas_delay.update_plot(self.data.delays[:stat["iDelay"]+1], self.data.sig[:stat["iDelay"]+1, 0])
-            self.canvas_wv.update_plot(self.data.wvs[:lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1], self.data.sig[stat["iDelay"], :lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1])
+            self.canvas_wv.update_plot(self.data.delays[:stat["iDelay"]+1], self.data.ref[:stat["iDelay"]+1, 0])
+            # self.canvas_wv.update_plot(self.data.wvs[:lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1], self.data.sig[stat["iDelay"], :lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1])
             if stat["iDelay"] + 1 == len(stat["ScanList"]):
                 lstat.expmsg("End of delay scan round {rd}, exporting data...".format(rd=stat["CurrentRound"]))
                 self.data.export("acq_data/" + self.lineEdit.text() + "-Round{rd}".format(rd=stat["CurrentRound"]))

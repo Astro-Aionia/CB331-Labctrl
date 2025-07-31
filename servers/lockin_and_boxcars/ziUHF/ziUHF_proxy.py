@@ -28,12 +28,12 @@ def online():
 
 @app.route("/get_value/<averaging_time>")
 def get_value(averaging_time):
-    value, count = uhf.get_value(averaging_time=float(averaging_time))
+    value, reference = uhf.get_value(averaging_time=float(averaging_time))
     res = dict()
     res['success'] = True
     res['message'] = "value:float"
     res['value'] = value
-    res['count'] = count
+    res['reference'] = reference
     res = json.dumps(res)
     return Response(res, status=200, mimetype='application/json')
 
