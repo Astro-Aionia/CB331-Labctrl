@@ -28,7 +28,7 @@ class BundlePyQt6EMCCD(QWidget, Ui_EMCCD):
 
         # UI setup
         self.lineEdit.setText(config["FileName"])
-        self.canvas = CanvasWidget()
+        self.canvas = CanvasWidget(ax_num=1, xlabel="Wavelength (nm))", ylabel=["Intensity"])
         hbox = QtWidgets.QHBoxLayout(self.widget)
         hbox.addWidget(self.canvas)
         self.pushButton_3.clicked.connect(lambda : self.close())
