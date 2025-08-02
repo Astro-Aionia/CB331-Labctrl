@@ -46,3 +46,7 @@ By default, assigned ports start from `50001`.
 
         UHF         50008
         Delayer     50009
+
+
+* Power Meters:
+        Ophir       50010
