@@ -1,0 +1,8 @@
+{
+    "Name": "ophir",
+    "Comment": "Ophir Power Meter",
+    "Host": "127.0.0.1",
+    "Port": 50010,
+    "Range": 0,
+    "AveragingTime": 2.0
+}
