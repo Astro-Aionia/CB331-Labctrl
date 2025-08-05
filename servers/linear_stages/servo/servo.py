@@ -1,6 +1,4 @@
 import time
-from http.client import responses
-
 import serial
 
 class Servo:

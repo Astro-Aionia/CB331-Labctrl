@@ -4,8 +4,6 @@ import sys
 import time
 import numpy as np
 
-from pyexpat.errors import messages
-
 sys.path.append(os.environ['LIGHTFIELD_ROOT'])
 sys.path.append(os.environ['LIGHTFIELD_ROOT']+"\\AddInViews")
 import clr

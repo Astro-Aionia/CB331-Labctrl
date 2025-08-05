@@ -1,0 +1,22 @@
+{
+    "Name": "C863",
+    "Comment": "PI C-863 linear stage",
+    "Host": "127.0.0.1",
+    "Port": 50011,
+    "WorkingUnit": "mm",
+    "ScanMode": "Range",
+    "ScanRound": 2,
+    "RangeScanStart": -2,
+    "RangeScanStop": -2,
+    "RangeScanStep": 1,
+    "LoadedExternalScanList": "C:\\Users\\zhenggroup\\Python\\CB331\\delaylist\\delay.txt",
+    "PositionUnit": "mm",
+    "ZeroPointAbsolutePosition": 0,
+    "ManualUnit": "mm",
+    "ManualPosition": 0,
+    "ManualStep": 1.0,
+    "Multiples": 0.5,
+    "SoftLimitMin": 0.0,
+    "SoftLimitMax": 26.0,
+    "WorkingDirection": "Positive"
+}
