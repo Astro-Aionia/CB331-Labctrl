@@ -17,7 +17,7 @@ class OSMS:
     def cmd(self, command, sleep=1):
         self.ser.write(command.encode('ascii'))
         response = self.ser.readline().decode()
-        # print(response)
+        print(response)
         time.sleep(sleep)
         return response
 
@@ -48,7 +48,7 @@ class OSMS:
         else:
             response = self.cmd(f"RUN CW {step_to_move}\r\n", sleep = step_to_move/self.frequency)
         self.position = position
-        print("Done.")
+        # print("Done.")
         return response
     
     def moveinc(self, distance):
@@ -60,7 +60,7 @@ class OSMS:
         else:
             response = self.cmd(f"RUN CW {step_to_move}\r\n", sleep = step_to_move/self.frequency)
         self.position = self.position + distance
-        print("Done.")
+        # print("Done.")
         return response
     
     def autohome(self):
@@ -70,7 +70,7 @@ class OSMS:
     
 if __name__ == "__main__":
     osms = OSMS(port="COM14")
-    time.sleep(5) # wait for the serial connection to establish
+    time.sleep(1) # wait for the serial connection to establish
     osms.set_velocity(10)
     osms.moveabs(30)
     osms.moveinc(-10)

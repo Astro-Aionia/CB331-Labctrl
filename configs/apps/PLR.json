@@ -1,0 +1,8 @@
+{
+    "Name": "PLR",
+    "Comment": "Polarization Rotator",
+    "DelayLine": "osms",
+    "Boxcar": "ziUHF",
+    "SaveFileName": "DelayScan",
+    "AveragingTime": 0.1
+}

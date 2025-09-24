@@ -5,7 +5,7 @@
     "Port": 50012,
     "WorkingUnit": "degree",
     "ScanMode": "Range",
-    "ScanRound": 2,
+    "ScanRound": 1,
     "RangeScanStart": 0.0,
     "RangeScanStop": 90.0,
     "RangeScanStep": 5,
