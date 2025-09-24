@@ -26,6 +26,8 @@ By default, assigned ports start from `50001`.
 * Linear Stages:
 
         CDHD2       50001
+        PI-C863     50011
+        OSMS-60YAM  50012
 
         
 * TOPAS:

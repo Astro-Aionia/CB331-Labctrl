@@ -1,0 +1,21 @@
+{
+    "Name": "osms",
+    "Comment": "The OSMS-60YAW rotation stage for polarization rotator",
+    "Host": "127.0.0.1",
+    "Port": 50012,
+    "WorkingUnit": "degree",
+    "ScanMode": "Range",
+    "ScanRound": 2,
+    "RangeScanStart": 0.0,
+    "RangeScanStop": 90.0,
+    "RangeScanStep": 5,
+    "PositionUnit": "degree",
+    "ManualUnit": "degree",
+    "ManualPosition": 0.0,
+    "ManualStep": 1.0,
+    "Multiples": 0.5,
+    "SoftLimitMin": -10.0,
+    "SoftLimitMax": 100.0,
+    "DrivingSpeedUnit": "degree/s",
+    "DrivingSpeed": 10
+}
