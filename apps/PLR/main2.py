@@ -12,7 +12,7 @@ from labctrl.labstat import LabStat, lstat
 
 from .ui.PLR import Ui_PLRExperiment
 from labctrl.components.linear_stages.osms.factory import FactoryOSMSStage
-from labctrl.components.power_meter.ophir.factory import FactoryOphir
+from labctrl.components.lockin_and_boxcars.ziUHF.factory import FactoryZiUHF
 from labctrl.widgets.message_box import MessageWidget
 from labctrl.widgets.canvas import CanvasWidget
 
@@ -28,6 +28,8 @@ class PLRExpData:
         self.delays = lstat.stat[delay_stage_name]["ScanList"]
         self.sig = np.zeros((len(self.delays), 1), dtype=np.float64)
         self.sigsum = np.zeros((len(self.delays), 1), dtype=np.float64)
+        self.ref = np.zeros((len(self.delays), 1), dtype=np.float64)
+        self.refsum = np.zeros((len(self.delays), 1), dtype=np.float64)
 
     def export(self, filestem: str) -> None:
         filename = filestem + "-Signal.csv"
@@ -35,6 +37,12 @@ class PLRExpData:
         np.savetxt(filename, tosave, delimiter=',')
         filename = filestem + "-Sum-Signal.csv"
         tosave = self.sigsum
+        np.savetxt(filename, tosave, delimiter=',')
+        filename = filestem + "-Ref.csv"
+        tosave = self.ref
+        np.savetxt(filename, tosave, delimiter=',')
+        filename = filestem + "-Sum-Ref.csv"
+        tosave = self.refsum
         np.savetxt(filename, tosave, delimiter=',')
         filename = filestem + "-Delays.csv"
         tosave = np.array(self.delays)
@@ -53,10 +61,10 @@ class PLRExperiment(QMainWindow, Ui_PLRExperiment):
         }
         self.linear_stage = factory.generate_bundle(delayline_bundle_config)
 
-        factory = FactoryOphir()
+        factory = FactoryZiUHF()
         detector_bundle_config = {
             "BundleType": "PyQt6",
-            "Config": lcfg.config["power_meter"][boxcar_name]
+            "Config": lcfg.config["lockin_and_boxcars"][boxcar_name]
         }
         self.boxcar = factory.generate_bundle(lcfg, lstat)
 
@@ -70,8 +78,9 @@ class PLRExperiment(QMainWindow, Ui_PLRExperiment):
             "FINISH": False,
         }
 
-        self.canvas_delay = CanvasWidget(ax_num=2, xlabel="Deg (°)", ylabel=["Signal", "Reference"])
-       
+        self.canvas_delay = CanvasWidget(ax_num=2, xlabel="Delay (ps)", ylabel=["Signal", "Reference"])
+        self.canvas_wv = CanvasWidget(ax_num=2, xlabel="Wavelength (nm)", ylabel=["Signal", "Reference"])
+
         # setup UI
         b1 = QtWidgets.QGridLayout(self.StageWidget)
         b1.addWidget(self.linear_stage)
@@ -98,12 +107,16 @@ class PLRExperiment(QMainWindow, Ui_PLRExperiment):
             lstat.expmsg("Retriving signal from sensor...")
             time.sleep(1)
             value = self.boxcar.get_value(averaging_time=lcfg.config["apps"][app_name]["AveragingTime"])
-            sig = value
+            sig = value[0]
+            ref = value[1]
             lstat.expmsg("Adding latest signal to dataset...")
             stat = lstat.stat[delay_stage_name]
             self.data.sig[stat["iDelay"], 0] = sig
             self.data.sigsum[stat["iDelay"], 0] += sig
-            new_delay_data = [[self.data.delays[:stat["iDelay"]+1], self.data.sig[:stat["iDelay"]+1, 0]], [self.data.delays[:stat["iDelay"]+1], self.data.sig[:stat["iDelay"]+1, 0]]]
+            self.data.ref[stat["iDelay"], 0] = ref
+            self.data.refsum[stat["iDelay"], 0] += ref
+            
+            new_delay_data = [[self.data.delays[:stat["iDelay"]+1], self.data.sig[:stat["iDelay"]+1, 0]], [self.data.delays[:stat["iDelay"]+1], self.data.ref[:stat["iDelay"]+1, 0]]]
         
             self.canvas_delay.update_plot(new_delay_data, labels=["Signal", "Reference"])
             if stat["iDelay"] + 1 == len(stat["ScanList"]):

@@ -35,7 +35,7 @@ try:
    # An Example for data retrieving
    OphirCOM.StartStream(DeviceHandle, 0)		# start measuring
    for i in range(10):		
-    time.sleep(.2)				# wait a little for data
+    time.sleep(1)				# wait a little for data
     data = OphirCOM.GetData(DeviceHandle, 0)
     if len(data[0]) > 0:		# if any data available, print the first one from the batch
      print('Reading = {0}, TimeStamp = {1}, Status = {2} '.format(data[0][0] ,data[1][0] ,data[2][0]))

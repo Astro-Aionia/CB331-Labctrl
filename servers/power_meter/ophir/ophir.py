@@ -48,18 +48,15 @@ class OphirCom:
             raise ValueError("No device found or range not set.")
         
     def get_data(self, averaging_time = 0.5):
-        if self.OphirCOM.IsSensorExists(self.DeviceHandle, 0):
-            self.OphirCOM.StartStream(self.DeviceHandle, 0)
-            time.sleep(averaging_time)  # Wait for data to be available
-            data = self.OphirCOM.GetData(self.DeviceHandle, 0)
-            self.OphirCOM.StopStream(self.DeviceHandle, 0)
-            if len(data[0]) > 0:
-                return np.array(data[2]).tolist()  # Return the data as a list
-                # return data[0][0], data[1][0], data[2][0]
-            else:
-                raise ValueError("No data available.")
+        self.OphirCOM.StartStream(self.DeviceHandle, 0)
+        time.sleep(averaging_time)  # Wait for data to be available
+        data = self.OphirCOM.GetData(self.DeviceHandle, 0)
+        self.OphirCOM.StopStream(self.DeviceHandle, 0)
+        if len(data[0]) > 0:
+            return np.array(data[0]).tolist()  # Return the data as a list
+            # return data[0][0], data[1][0], data[2][0]
         else:
-            raise ValueError("No sensor exists for the given device handle.")
+            raise ValueError("No data available.")
         
     def get_value(self, averaging_time=0.5):
         """Get the average value from the Ophir device."""
@@ -76,7 +73,7 @@ ophir = OphirCom(sn)
 if __name__ == "__main__":    
     try:
         print("Current Range:", ophir.get_range())
-        ophir.set_range(1)  # Example to set range
+        ophir.set_range(3)  # Example to set range
         print("Data:", ophir.get_data(1))
     except Exception as e:
         print("Error:", e)
