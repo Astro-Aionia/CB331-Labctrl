@@ -2,6 +2,7 @@ import numpy as np
 from labctrl.labconfig import LabConfig
 from labctrl.labstat import LabStat
 from .remote import RemoteServoStage
+from .utils import ignore_connection_error
 
 from PyQt6 import QtWidgets
 from PyQt6.QtWidgets import QWidget
@@ -94,6 +95,7 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
         self.delay_selcet.addWidget(self.filedialog)
         self.filedialog.lineEdit.setText(self.config["LoadedExternalScanList"])
 
+        @ignore_connection_error
         @update_config
         def __set_velocity():
             config["DrivingSpeed"] = float(self.lineEdit_2.text())
@@ -118,6 +120,7 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
 
         self.workUnit.currentTextChanged.connect(__set_workunit)
 
+        @ignore_connection_error
         @update_config
         def __movepos(buttonStatus: bool):
             target_distance = calc_dis(float(self.lineEdit_3.text()),config["WorkingDirection"],config["WorkingUnit"])
@@ -128,6 +131,7 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
 
         self.pushButton_1.clicked.connect(__movepos)
 
+        @ignore_connection_error
         @update_config
         def __moveneg(buttonStatus: bool):
             target_distance = calc_dis(float(self.lineEdit_3.text()),config["WorkingDirection"],config["WorkingUnit"])
@@ -138,6 +142,7 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
 
         self.pushButton_2.clicked.connect(__moveneg)
 
+        @ignore_connection_error
         @update_config
         def __moveabs(buttonStatus: bool):
             config["ManualPosition"] = calc_pos(float(self.lineEdit_4.text()),config["WorkingDirection"],config["WorkingUnit"],config["ZeroPointAbsolutePosition"])
@@ -147,6 +152,7 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
 
         self.pushButton_3.clicked.connect(__moveabs)
 
+        @ignore_connection_error
         @update_config
         def __home(buttonStatus: bool):
             config["ManualPosition"] = config["ZeroPointAbsolutePosition"]

@@ -2,6 +2,7 @@ import numpy as np
 from labctrl.labconfig import LabConfig
 from labctrl.labstat import LabStat
 from .remote import RemoteOSMSStage
+from .utils import ignore_connection_error
 
 from PyQt6 import QtWidgets
 from PyQt6.QtWidgets import QWidget
@@ -39,6 +40,7 @@ class BundlePyQt6OSMSStage(QWidget, Ui_OSMSStage):
         else:
             pass
 
+        @ignore_connection_error
         @update_config
         def __set_velocity():
             config["DrivingSpeed"] = float(self.lineEdit_2.text())
@@ -47,6 +49,7 @@ class BundlePyQt6OSMSStage(QWidget, Ui_OSMSStage):
 
         self.lineEdit_2.editingFinished.connect(__set_velocity)
 
+        @ignore_connection_error
         @update_config
         def __set_zero_point(buttonStatus: bool):
             response = self.remote.set_zero()
@@ -54,6 +57,7 @@ class BundlePyQt6OSMSStage(QWidget, Ui_OSMSStage):
 
         self.pushButton_5.clicked.connect(__set_zero_point)
 
+        @ignore_connection_error
         @update_config
         def __movepos(buttonStatus: bool):
             target_distance = float(self.lineEdit_3.text())
@@ -64,6 +68,7 @@ class BundlePyQt6OSMSStage(QWidget, Ui_OSMSStage):
 
         self.pushButton_1.clicked.connect(__movepos)
 
+        @ignore_connection_error
         @update_config
         def __moveneg(buttonStatus: bool):
             target_distance = -float(self.lineEdit_3.text())
@@ -74,6 +79,7 @@ class BundlePyQt6OSMSStage(QWidget, Ui_OSMSStage):
 
         self.pushButton_2.clicked.connect(__moveneg)
 
+        @ignore_connection_error
         @update_config
         def __moveabs(buttonStatus: bool):
             config["ManualPosition"] = float(self.lineEdit_4.text())
@@ -83,6 +89,7 @@ class BundlePyQt6OSMSStage(QWidget, Ui_OSMSStage):
 
         self.pushButton_3.clicked.connect(__moveabs)
 
+        @ignore_connection_error
         @update_config
         def __home(buttonStatus: bool):
             config["ManualPosition"] = 0.0

@@ -1,9 +1,11 @@
 import requests
+from functools import wraps
 
 def ignore_connection_error(func):
-    def ret():
+    @wraps(func)
+    def ret(*args, **kwargs):
         try:
-            func()
+            func(*args, **kwargs)
         except requests.exceptions.ConnectionError as e:
             print("Connection failed")
     return ret

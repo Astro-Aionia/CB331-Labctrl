@@ -4,6 +4,7 @@ import numpy as np
 from labctrl.labconfig import LabConfig
 from labctrl.labstat import LabStat
 from .remote import ProxiedTOPAS
+from .utils import ignore_connection_error
 
 from PyQt6.QtWidgets import QWidget
 from .bundle_widget import Ui_TOPASDemo
@@ -35,6 +36,7 @@ class BundlePyQt6TOPAS(QWidget, Ui_TOPASDemo):
 
         self.pushButton.clicked.connect(lambda : self.shutter_switch())
 
+        @ignore_connection_error
         @update_config
         def __set_wavelength():
             interation = self.comboBox_1.currentText()
@@ -113,6 +115,7 @@ class BundlePyQt6TOPAS(QWidget, Ui_TOPASDemo):
 
         self.shutter_swich_acquire = shutter_swich_acquire
 
+    @ignore_connection_error
     def shutter_switch(self):
         name = self.name
         if name not in self.lstat.stat:
@@ -122,6 +125,7 @@ class BundlePyQt6TOPAS(QWidget, Ui_TOPASDemo):
         self.lstat.stat[name]["ShutterIsOpen"] = response["shutterIsOpen"]
         self.lstat.dump_stat("last_stat.json")
 
+    @ignore_connection_error
     def shutter_close(self):
         name = self.name
         if name not in self.lstat.stat:
@@ -132,6 +136,7 @@ class BundlePyQt6TOPAS(QWidget, Ui_TOPASDemo):
             self.lstat.stat[name]["ShutterIsOpen"] = response["shutterIsOpen"]
             self.lstat.dump_stat("last_stat.json")
 
+    @ignore_connection_error
     def shutter_open(self):
         name = self.name
         if name not in self.lstat.stat:

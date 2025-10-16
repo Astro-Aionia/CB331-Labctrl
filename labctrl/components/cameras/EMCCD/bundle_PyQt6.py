@@ -1,6 +1,7 @@
 from labctrl.labconfig import LabConfig
 from labctrl.labstat import LabStat
 from .remote import RemoteEMCCD
+from .utils import ignore_connection_error
 
 from PyQt6 import QtWidgets
 from PyQt6.QtWidgets import QWidget
@@ -44,18 +45,22 @@ class BundlePyQt6EMCCD(QWidget, Ui_EMCCD):
 
         self.lineEdit.editingFinished.connect(__set_filename)
 
+    @ignore_connection_error
     def close(self):
         response = self.remote.close()
         self.lstat.fmtmsg(response)
 
+    @ignore_connection_error
     def clean(self):
         response = self.remote.clean_count()
         self.lstat.fmtmsg(response)
 
+    @ignore_connection_error
     def reset(self):
         response = self.remote.reset()
         self.lstat.fmtmsg(response)
 
+    @ignore_connection_error
     def acquire(self):
         filename = self.lineEdit.text()
         response = self.remote.acquire(filename)

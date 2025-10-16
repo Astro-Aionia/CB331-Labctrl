@@ -56,6 +56,7 @@ class FactoryZiUHF:
         
         bundle.pushButton.clicked.connect(__manual_take_sample)
 
+        @ignore_connection_error
         def __get_value(averaging_time=0.1):
             rc = remote.get_value(averaging_time)
             value = rc["value"]
