@@ -8,7 +8,7 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigatio
 import matplotlib.pyplot as plt
 from .ui.canvas import Ui_MplCanvas
 
-colors = ['black', 'blue', 'green', 'cyan', 'magenta', 'yellow', 'orange']
+colors = ['red', 'green', 'cyan', 'magenta', 'yellow', 'orange', 'black']
 
 class MplCanvas(FigureCanvas):
     def __init__(self, parent=None, width=10, height=6, dpi=100, ax_num = 1, xlabel="X-axis", ylabel=[]):
@@ -56,7 +56,7 @@ class CanvasWidget(QWidget, Ui_MplCanvas):
             print("Warning: Data length does not match number of axes, no operation.")
         else:
             self.data_canvas.host_ax.clear()
-            self.data_canvas.host_ax.plot(data[0][0], data[0][1], 'r-', label=labels[0] if labels else "Data 1")
+            self.data_canvas.host_ax.plot(data[0][0], data[0][1], 'b-', label=labels[0] if labels else "Data 1")
             # self.data_canvas.host_ax.legend()
             for i in range(self.n - 1):
                 self.data_canvas.added_axes[i].clear()

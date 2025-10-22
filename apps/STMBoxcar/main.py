@@ -102,8 +102,10 @@ class STMBoxcarExperiment(QMainWindow, Ui_STMBoxcarExperiment):
             "FINISH": False,
         }
 
-        self.canvas_delay = CanvasWidget(ax_num=2, xlabel="Delay (ps)", ylabel=["Signal", "Reference"])
-        self.canvas_wv = CanvasWidget(ax_num=2, xlabel="Wavelength (nm)", ylabel=["Signal", "Reference"])
+        self.canvas_delay = CanvasWidget(ax_num=2, xlabel="Delay (ps)", ylabel=["Current", "Average"])
+        self.canvas_wv = CanvasWidget(ax_num=2, xlabel="Wavelength (nm)", ylabel=["Current", "Average"])
+        self.canvas_delayrf = CanvasWidget(ax_num=2, xlabel="Delay (ps)", ylabel=["Current", "Average"])
+        self.canvas_wvrf = CanvasWidget(ax_num=2, xlabel="Wavelength (nm)", ylabel=["Current", "Average"])
 
         # setup UI
         b1 = QtWidgets.QGridLayout(self.StageWidget)
@@ -118,7 +120,15 @@ class STMBoxcarExperiment(QMainWindow, Ui_STMBoxcarExperiment):
         b4.addWidget(self.tp_static)
         b5 = QtWidgets.QGridLayout(self.WaveCurveWidget)
         b5.addWidget(self.canvas_wv)
+        b6 = QtWidgets.QGridLayout(self.DelayCurveRfWidget)
+        b6.addWidget(self.canvas_delayrf)
+        b7 = QtWidgets.QGridLayout(self.WaveCurveRfWidget)
+        b7.addWidget(self.canvas_wvrf)
+
         self.lineEdit_2.setText(str(lcfg.config["apps"][app_name]["AveragingTime"]))
+
+        self.lineEdit_delay.setReadOnly(True)
+        self.lineEdit_wv.setReadOnly(True)
 
         @lcfg.update_config
         def __set_averaging_time():
@@ -136,7 +146,7 @@ class STMBoxcarExperiment(QMainWindow, Ui_STMBoxcarExperiment):
                     "PumpProbe operation received signal TERMINATE, trying graceful Thread exit")
                 return
             lstat.expmsg("Retriving signal from sensor...")
-            time.sleep(1)
+            time.sleep(0.2)
             value = self.boxcar.get_value(averaging_time=lcfg.config["apps"][app_name]["AveragingTime"])
             sig = value[0]
             ref = value[1]
@@ -147,11 +157,19 @@ class STMBoxcarExperiment(QMainWindow, Ui_STMBoxcarExperiment):
             self.data.ref[stat["iDelay"], lstat.stat[tp_dynamic_name]["iPumpWavelength"]] = ref
             self.data.refsum[stat["iDelay"], lstat.stat[tp_dynamic_name]["iPumpWavelength"]] += ref
             
-            new_delay_data = [[self.data.delays[:stat["iDelay"]+1], self.data.sig[:stat["iDelay"]+1, 0]], [self.data.delays[:stat["iDelay"]+1], self.data.ref[:stat["iDelay"]+1, 0]]]
-            new_wv_data = [[self.data.wvs[:lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1], self.data.sig[stat["iDelay"], :lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1]], [self.data.wvs[:lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1], self.data.ref[stat["iDelay"], :lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1]]]
+            # new_delay_data = [[self.data.delays[:stat["iDelay"]+1], self.data.sig[:stat["iDelay"]+1, 0]], [self.data.delays[:stat["iDelay"]+1], self.data.ref[:stat["iDelay"]+1, 0]]]
+            # new_wv_data = [[self.data.wvs[:lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1], self.data.sig[stat["iDelay"], :lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1]], [self.data.wvs[:lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1], self.data.ref[stat["iDelay"], :lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1]]]
 
-            self.canvas_delay.update_plot(new_delay_data, labels=["Signal", "Reference"])
-            self.canvas_wv.update_plot(new_wv_data, labels=["Signal, Reference"])
+            new_delay_data = [[self.data.delays[:stat["iDelay"]+1], self.data.sig[:stat["iDelay"]+1, 0]], [self.data.delays, self.data.sigsum[:, 0]/(stat["CurrentRound"]+1)]]
+            new_wv_data = [[self.data.wvs[:lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1], self.data.sig[stat["iDelay"], :lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1]], [self.data.wvs, self.data.refsum[stat["iDelay"], :]/(stat["CurrentRound"]+1)]]
+            new_delay_ref = [[self.data.delays[:stat["iDelay"]+1], self.data.ref[:stat["iDelay"]+1, 0]], [self.data.delays, self.data.refsum[:, 0]/(stat["CurrentRound"]+1)]]
+            new_wv_ref = [[self.data.wvs[:lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1], self.data.ref[stat["iDelay"], :lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1]], [self.data.wvs, self.data.refsum[stat["iDelay"], :]/(stat["CurrentRound"]+1)]]
+
+            self.canvas_delay.update_plot(new_delay_data, labels=["Current", "Average"])
+            self.canvas_wv.update_plot(new_wv_data, labels=["Current", "Average"])
+            self.canvas_delayrf.update_plot(new_delay_ref, labels=["Current", "Average"])
+            self.canvas_wvrf.update_plot(new_wv_ref, labels=["Current", "Average"])
+            
             # self.canvas_wv.update_plot(self.data.wvs[:lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1], self.data.sig[stat["iDelay"], :lstat.stat[tp_dynamic_name]["iPumpWavelength"]+1])
             if stat["iDelay"] + 1 == len(stat["ScanList"]):
                 lstat.expmsg("End of delay scan round {rd}, exporting data...".format(rd=stat["CurrentRound"]))
@@ -208,6 +226,22 @@ class STMBoxcarExperiment(QMainWindow, Ui_STMBoxcarExperiment):
             lcfg.config["apps"][app_name]["SaveFileName"] = self.lineEdit.text()
 
         self.lineEdit.editingFinished.connect(__set_filename)
+
+        def __set_delay_veiwer():
+            try:
+                self.lineEdit_delay.setText(str(lstat.stat[delay_stage_name]["Delay"][int(self.lineEdit_delayNum.text())]))
+            except Exception as err:
+                print("Error: ", err)
+
+        self.lineEdit_delayNum.editingFinished.connect(__set_delay_veiwer)
+
+        def __set_wv_veiwer():
+            try:
+                self.lineEdit_delay.setText(str(lstat.stat[tp_dynamic_name]["PumpWavelength"][int(self.lineEdit_wvNum.text())]))
+            except Exception as err:
+                print("Error: ", err)
+
+        self.lineEdit_wvNum.editingFinished.connect(__set_wv_veiwer)
 
 if __name__ == "mainWindow":
     STMBoxcar = QApplication(sys.argv)

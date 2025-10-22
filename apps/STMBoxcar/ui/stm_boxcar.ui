@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1901</width>
-    <height>926</height>
+    <height>1237</height>
    </rect>
   </property>
   <property name="font">
@@ -56,9 +56,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>410</y>
+      <y>450</y>
       <width>1111</width>
-      <height>511</height>
+      <height>391</height>
      </rect>
     </property>
     <property name="font">
@@ -162,9 +162,9 @@
     <property name="geometry">
      <rect>
       <x>1130</x>
-      <y>410</y>
+      <y>450</y>
       <width>751</width>
-      <height>511</height>
+      <height>391</height>
      </rect>
     </property>
     <property name="font">
@@ -211,6 +211,114 @@
     <property name="font">
      <font>
       <family>Consolas</family>
+      <pointsize>12</pointsize>
+      <bold>false</bold>
+     </font>
+    </property>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>13</x>
+      <y>409</y>
+      <width>851</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label_delayNum">
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Delay #: </string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEdit_delayNum"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_Delay">
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Delay: </string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEdit_delay"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_wvNum">
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Wavelength #: </string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEdit_wvNum"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_wv">
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Wavelength: </string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEdit_wv"/>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="DelayCurveRfWidget" native="true">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>770</y>
+      <width>1111</width>
+      <height>391</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <bold>false</bold>
+     </font>
+    </property>
+   </widget>
+   <widget class="QWidget" name="WaveCurveRfWidget" native="true">
+    <property name="geometry">
+     <rect>
+      <x>1130</x>
+      <y>770</y>
+      <width>751</width>
+      <height>391</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
       <pointsize>12</pointsize>
       <bold>false</bold>
      </font>
