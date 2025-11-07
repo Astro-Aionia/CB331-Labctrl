@@ -2,7 +2,7 @@ import json
 from flask import Flask, Response
 from osms import OSMS
 
-stage = OSMS(port="COM14")
+stage = OSMS(port="COM21")
 app = Flask(__name__)
 
 @app.route("/")

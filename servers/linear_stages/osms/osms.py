@@ -5,7 +5,8 @@ class OSMS:
     def __init__(self, port, baud=9600, timeout=1):
         self.port = port
         self.ser = serial.Serial(self.port, baudrate=baud, timeout=timeout)
-        self.ser.readline()
+        time.sleep(1)
+        print(self.ser.readlines())
         self.position = 0 # degrees
         self.distance = 0 # degrees
         self.velocity = 10 # degrees/s
@@ -14,10 +15,10 @@ class OSMS:
         self.frequency = int(self.velocity/(self.step)) # Hz
         # self.set_velocity(self.velocity)
 
-    def cmd(self, command, sleep=1):
+    def cmd(self, command, sleep=0.2):
         self.ser.write(command.encode('ascii'))
         response = self.ser.readline().decode()
-        print(response)
+        print(response.replace('\r\n', ''))
         time.sleep(sleep)
         return response
 
@@ -69,8 +70,9 @@ class OSMS:
         return response
     
 if __name__ == "__main__":
-    osms = OSMS(port="COM14")
+    osms = OSMS(port="COM21")
     time.sleep(1) # wait for the serial connection to establish
+    print("Wait 1 s for opration")
     osms.set_velocity(10)
-    osms.moveabs(30)
-    osms.moveinc(-10)
+    #osms.moveabs(30)
+    #osms.moveinc(-10)
