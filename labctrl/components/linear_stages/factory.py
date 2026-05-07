@@ -1,9 +1,9 @@
 from labctrl.labstat import LabStat
 from labctrl.labconfig import LabConfig
 
-from .bundle_PyQt6 import BundlePyQt6ServoStage
+from .bundle_PyQt6 import BundlePyQt6LinearStage
 
-class FactoryServoStage:
+class FactoryLinearStage:
     """
     This class is responsible for generating BundleLinearStage objects
     from given params
@@ -27,6 +27,6 @@ class FactoryServoStage:
         name = bundle_config["Config"]["Name"]
         if name in self.generated:
             print("[SANITY] FactoryLinearStage: BundleLinearStage with name {} already generated before!".format(name))
-        foo = BundlePyQt6ServoStage(bundle_config, self.lcfg, self.lstat)
+        foo = BundlePyQt6LinearStage(bundle_config, self.lcfg, self.lstat)
         self.generated[name] = foo
         return foo

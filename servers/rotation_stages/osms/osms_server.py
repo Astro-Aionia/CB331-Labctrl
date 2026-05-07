@@ -1,6 +1,6 @@
 import json
 from flask import Flask, Response
-from osms import OSMS
+from servers.rotation_stages.osms.osms import OSMS
 
 stage = OSMS(port="COM21")
 app = Flask(__name__)

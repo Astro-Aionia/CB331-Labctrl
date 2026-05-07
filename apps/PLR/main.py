@@ -11,7 +11,7 @@ from labctrl.labconfig import LabConfig, lcfg
 from labctrl.labstat import LabStat, lstat
 
 from .ui.PLR import Ui_PLRExperiment
-from labctrl.components.linear_stages.osms.factory import FactoryOSMSStage
+from labctrl.components.rotation_stages.osms.factory import FactoryOSMSStage
 from labctrl.components.power_meter.ophir.factory import FactoryOphir
 from labctrl.widgets.message_box import MessageWidget
 from labctrl.widgets.canvas import CanvasWidget

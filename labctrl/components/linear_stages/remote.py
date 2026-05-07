@@ -13,7 +13,7 @@ __version__ = "20211110"
 import requests
 import json
 
-class RemoteServoStage():
+class RemoteLinearStage():
     def __init__(self, config, max_retry=3) -> None:
         self.host = config["Host"]
         self.port = config["Port"]

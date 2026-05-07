@@ -1,12 +1,12 @@
 import numpy as np
 from labctrl.labconfig import LabConfig
 from labctrl.labstat import LabStat
-from .remote import RemoteServoStage
+from .remote import RemoteLinearStage
 from .utils import ignore_connection_error
 
 from PyQt6 import QtWidgets
 from PyQt6.QtWidgets import QWidget
-from .bundle_widget import Ui_ServoStage
+from .bundle_widget import Ui_LinearStage
 from labctrl.widgets.file_dialog import FileSelect
 
 def calc_pos(pos:float, direction: str, unit:str, zero_point:float):
@@ -43,7 +43,7 @@ def calc_dis(dis:float, direction: str, unit:str):
         print("Invalid direction, the default direction Positive is applied.")
         return distance
 
-class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
+class BundlePyQt6LinearStage(QWidget, Ui_LinearStage):
     def __init__(self, bundle_config: dict, lcfg: LabConfig, lstat: LabStat, parent=None) -> None:
         QWidget.__init__(self, parent=parent)
         self.config: dict = bundle_config["Config"]
@@ -55,7 +55,7 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
         config = self.config  # Alias for easier access
         name = self.name  # Alias for easier access
 
-        self.remote = RemoteServoStage(config)
+        self.remote = RemoteLinearStage(config)
 
         self.update_scanlist(config)
 

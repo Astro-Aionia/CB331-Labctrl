@@ -11,7 +11,7 @@ from labctrl.labconfig import LabConfig, lcfg
 from labctrl.labstat import LabStat, lstat
 
 from .ui.SFG import Ui_SFGExperiment
-from labctrl.components.linear_stages.servo.factory import FactoryServoStage
+from labctrl.components.linear_stages.factory import FactoryLinearStage
 from labctrl.components.TOPAS.factory import FactoryTOPAS
 from labctrl.components.cameras.EMCCD.factory import FactoryEMCCD
 from labctrl.widgets.message_box import MessageWidget
@@ -78,7 +78,7 @@ class SFGExperiment(QMainWindow, Ui_SFGExperiment):
         self.setupUi(self)
 
         # add devices and functions
-        factory = FactoryServoStage(lcfg, lstat)
+        factory = FactoryLinearStage(lcfg, lstat)
         delayline_bundle_config = {
             "BundleType": "PyQt6",
             "Config": lcfg.config["linear_stages"][delay_stage_name]

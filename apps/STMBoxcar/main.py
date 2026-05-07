@@ -11,7 +11,7 @@ from labctrl.labconfig import LabConfig, lcfg
 from labctrl.labstat import LabStat, lstat
 
 from .ui.stm_boxcar import Ui_STMBoxcarExperiment
-from labctrl.components.linear_stages.servo.factory import FactoryServoStage
+from labctrl.components.linear_stages.factory import FactoryLinearStage
 from labctrl.components.TOPAS.factory import FactoryTOPAS
 from labctrl.components.lockin_and_boxcars.ziUHF.factory import FactoryZiUHF
 from labctrl.widgets.message_box import MessageWidget
@@ -58,7 +58,7 @@ class STMBoxcarExperiment(QMainWindow, Ui_STMBoxcarExperiment):
         self.setupUi(self)
 
         # add devices and functions
-        factory = FactoryServoStage(lcfg, lstat)
+        factory = FactoryLinearStage(lcfg, lstat)
         delayline_bundle_config = {
             "BundleType": "PyQt6",
             "Config": lcfg.config["linear_stages"][delay_stage_name]

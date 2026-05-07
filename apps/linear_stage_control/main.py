@@ -8,7 +8,7 @@ from labctrl.labconfig import LabConfig, lcfg
 from labctrl.labstat import LabStat, lstat
 
 from .ui.linear_stage_control import Ui_LinearStageControlExperiment
-from labctrl.components.linear_stages.servo.factory import FactoryServoStage
+from labctrl.components.linear_stages.factory import FactoryLinearStage
 from labctrl.widgets.message_box import MessageWidget
 
 app_name = "linear_stage_control"
@@ -22,7 +22,7 @@ class LinearStageControlExperiment(QMainWindow, Ui_LinearStageControlExperiment)
 
         # add devices and functions
         # self.lstat = lstat
-        factory = FactoryServoStage(lcfg, lstat)
+        factory = FactoryLinearStage(lcfg, lstat)
         delayline_bundle_config = {
             "BundleType": "PyQt6",
             "Config": lcfg.config["linear_stages"][delay_stage_name]
