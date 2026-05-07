@@ -18,5 +18,9 @@
     "Multiples": 0.5,
     "SoftLimitMin": 0.0,
     "SoftLimitMax": 26.0,
-    "WorkingDirection": "Positive"
+    "WorkingDirection": "Positive",
+    "DrivingSpeedUnit": "mm/s",
+    "DrivingSpeed": 30,
+    "DrivingAccelerationUnit": "mm/s^2",
+    "DrivingAcceleration": 6000
 }

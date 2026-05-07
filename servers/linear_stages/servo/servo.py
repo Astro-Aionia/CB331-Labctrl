@@ -33,7 +33,7 @@ class Servo:
         print(f"Set velocity to {velocity} mm/s.")
 
     def moveabs(self, position):
-        print(f"Moving to {position} mm/s.")
+        print(f"Moving to {position} mm.")
         self.distance = abs(position - self.position)
         response = self.cmd(f"MOVEABS {position} {self.velocity}\r", sleep= self.distance/self.velocity)
         self.position = position
@@ -41,7 +41,7 @@ class Servo:
         return response
 
     def moveinc(self, distance):
-        print(f"Moving by {distance} mm/s.")
+        print(f"Moving by {distance} mm.")
         self.distance = abs(distance)
         response = self.cmd(f"MOVEINC {distance} {self.velocity}\r", sleep= self.distance/self.velocity)
         self.position = self.position + distance

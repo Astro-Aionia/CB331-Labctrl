@@ -61,6 +61,7 @@ class BundlePyQt6ServoStage(QWidget, Ui_ServoStage):
 
         # UI setup and initialize parameters
         self.setupUi(self)
+        self.label_1.setText(self.name)
         self.lineEdit_1.setReadOnly(True)
         self.lineEdit_1.setText("{:.3f}".format(self.config["ManualPosition"]))
         self.lineEdit_2.setText(str(self.config["DrivingSpeed"]))
