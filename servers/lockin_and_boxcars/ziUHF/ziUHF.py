@@ -133,6 +133,10 @@ class ziUHF:
         #     sample = data[cfg["BackgroundSamplePath"]]
         #     value = sample["value"]
         #     s = np.concatenate((s, value))
+        if type(s) != list:
+            s = s.tolist()
+        if type(r) != list:
+            r = r.tolist()
         return s, r
 
 uhf = ziUHF()

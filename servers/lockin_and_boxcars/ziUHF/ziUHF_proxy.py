@@ -21,19 +21,32 @@ def online():
     res['success'] = True
     res['message'] = "The proxy is ONLINE"
     res['name'] = "ziUHF"
-    res['methods'] = ['get_value']
+    res['methods'] = ['get_value', 'get_data']
     res = json.dumps(res)
     return Response(res, status=200, mimetype='application/json')
 
 
 @app.route("/get_value/<averaging_time>")
-def get_value(averaging_time):
+def get_value(averaging_time=0.1):
     value, reference = uhf.get_value(averaging_time=float(averaging_time))
     res = dict()
     res['success'] = True
     res['message'] = "value:float"
     res['value'] = value
     res['reference'] = reference
+    res['averaging_time'] = averaging_time
+    res = json.dumps(res)
+    return Response(res, status=200, mimetype='application/json')
+
+@app.route("/get_data/<averaging_time>")
+def get_data(averaging_time=0.1):
+    data, reference = uhf.get_data(averaging_time=float(averaging_time))
+    res = dict()
+    res['success'] = True
+    res['message'] = "data:list"
+    res['data'] = data
+    res['reference'] = reference
+    res['averaging_time'] = averaging_time
     res = json.dumps(res)
     return Response(res, status=200, mimetype='application/json')
 
