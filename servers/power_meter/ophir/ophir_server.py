@@ -51,11 +51,13 @@ def get_data(averaging_time):
         res['success'] = True
         res['message'] = "Data retrieved successfully"
         res['data'] = data  # Convert numpy array to list for JSON serialization
+        res['averaging_time'] = float(averaging_time)
     except ValueError as e:
         res = dict()
         res['success'] = False
         res['message'] = str(e)
         res['data'] = []
+        res['averaging_time'] = float(averaging_time)
     res = json.dumps(res)
     return Response(res, status=200, mimetype='application/json')
 
@@ -67,11 +69,13 @@ def get_value(averaging_time):
         res['success'] = True
         res['message'] = "Value retrieved successfully"
         res['value'] = float(value)
+        res['averaging_time'] = float(averaging_time)
     except ValueError as e:
         res = dict()
         res['success'] = False
         res['message'] = str(e)
         res['value'] = None
+        res['averaging_time'] = float(averaging_time)
     res = json.dumps(res)
     return Response(res, status=200, mimetype='application/json')
 
