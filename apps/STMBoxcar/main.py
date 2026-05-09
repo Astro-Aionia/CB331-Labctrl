@@ -13,7 +13,7 @@ from labctrl.labstat import LabStat, lstat
 from .ui.stm_boxcar import Ui_STMBoxcarExperiment
 from labctrl.components.linear_stages.factory import FactoryLinearStage
 from labctrl.components.TOPAS.factory import FactoryTOPAS
-from labctrl.components.lockin_and_boxcars.ziUHF.factory import FactoryZiUHF
+from labctrl.components.single_point_detectors.factory import FactorySinglePointDetector
 from labctrl.widgets.message_box import MessageWidget
 from labctrl.widgets.canvas import CanvasWidget
 
@@ -85,12 +85,12 @@ class STMBoxcarExperiment(QMainWindow, Ui_STMBoxcarExperiment):
         # time.sleep(0.1)
         # self.tp_static.change_shutter()
 
-        factory = FactoryZiUHF()
+        factory = FactorySinglePointDetector(lcfg, lstat)
         detector_bundle_config = {
             "BundleType": "PyQt6",
             "Config": lcfg.config["lockin_and_boxcars"][boxcar_name]
         }
-        self.boxcar = factory.generate_bundle(lcfg, lstat)
+        self.boxcar = factory.generate_bundle(detector_bundle_config)
 
         self.message_box = MessageWidget(lstat)
 
