@@ -39,7 +39,7 @@ class BundleSinglePointDetector(QWidget, Ui_SinglePointDetector):
                 if new_avg_time <= 0:
                     raise ValueError("Averaging time must be positive.")
                 self.config["AveragingTime"] = new_avg_time
-                lstat.fmtmsg(f"Averaging time set to {new_avg_time:.6f} seconds.")
+                lstat.expmsg(f"Averaging time set to {new_avg_time:.6f} seconds.")
             except ValueError as e:
                 lstat.expmsg(f"Invalid input for averaging time: {e}")
                 self.avgTimeEdit.setText(str(self.config["AveragingTime"]))
@@ -54,7 +54,7 @@ class BundleSinglePointDetector(QWidget, Ui_SinglePointDetector):
             reference = rc["reference"]
             self.valueSignal.setText("{:e}".format(value))
             self.valueRef.setText("{:e}".format(reference))
-            lstat.fmtmsg(f"Manually retrieved value: {value:.6e}, reference: {reference:.6e}")
+            lstat.expmsg(f"Manually retrieved value: {value:.6e}, reference: {reference:.6e}")
         
         self.valueButton.clicked.connect(__manual_take_value)
 
@@ -66,22 +66,26 @@ class BundleSinglePointDetector(QWidget, Ui_SinglePointDetector):
             reference = rc["reference"]
             self.dataSignal.setText(str(data))
             self.dataRef.setText(str(reference))
-            lstat.fmtmsg(f"Manually retrieved data: {data}, reference: {reference}")
+            lstat.expmsg(f"Manually retrieved data: {data}, reference: {reference}")
         
         self.dataButton.clicked.connect(__manual_take_data)
 
         @ignore_connection_error
-        def __get_value(averaging_time=0.1):
-            rc = self.remote.get_value(averaging_time)
+        def __get_value():
+            rc = self.remote.get_value(self.config["AveragingTime"])
             value = rc["value"]
             reference = rc["reference"]
+            self.valueSignal.setText("{:e}".format(value))
+            self.valueRef.setText("{:e}".format(reference))
             return [float(value), float(reference)]
         
         @ignore_connection_error
-        def __get_data(averaging_time=0.1):
-            rc = self.remote.get_data(averaging_time)
+        def __get_data():
+            rc = self.remote.get_data(self.config["AveragingTime"])
             data = rc["data"]
             reference = rc["reference"]
+            self.dataSignal.setText(str(data))
+            self.dataRef.setText(str(reference))
             return [data, reference]
         
         self.get_value = __get_value

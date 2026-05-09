@@ -108,34 +108,37 @@ class STMBoxcarExperiment(QMainWindow, Ui_STMBoxcarExperiment):
         self.canvas_wvrf = CanvasWidget(ax_num=2, xlabel="Wavelength (nm)", ylabel=["Current", "Average"])
 
         # setup UI
-        b1 = QtWidgets.QGridLayout(self.StageWidget)
-        b1.addWidget(self.linear_stage)
-        b2 = QtWidgets.QGridLayout(self.MessageWidget)
-        b2.addWidget(self.message_box)
-        b3 = QtWidgets.QGridLayout(self.DelayCurveWidget)
-        b3.addWidget(self.canvas_delay)
+        b = QtWidgets.QGridLayout(self.StageWidget)
+        b.addWidget(self.linear_stage)
+        b = QtWidgets.QGridLayout(self.MessageWidget)
+        b.addWidget(self.message_box)
+        b = QtWidgets.QGridLayout(self.DelayCurveWidget)
+        b.addWidget(self.canvas_delay)
         self.lineEdit.setText(lcfg.config["apps"][app_name]["SaveFileName"])
-        b4 = QtWidgets.QGridLayout(self.TOPASWidget)
-        b4.addWidget(self.tp_dynamic)
-        b4.addWidget(self.tp_static)
-        b5 = QtWidgets.QGridLayout(self.WaveCurveWidget)
-        b5.addWidget(self.canvas_wv)
-        b6 = QtWidgets.QGridLayout(self.DelayCurveRfWidget)
-        b6.addWidget(self.canvas_delayrf)
-        b7 = QtWidgets.QGridLayout(self.WaveCurveRfWidget)
-        b7.addWidget(self.canvas_wvrf)
+        b = QtWidgets.QGridLayout(self.TOPASWidget)
+        b.addWidget(self.tp_dynamic)
+        b.addWidget(self.tp_static)
+        b = QtWidgets.QGridLayout(self.DetectorWidget)
+        b.addWidget(self.boxcar)
+        b = QtWidgets.QGridLayout(self.WaveCurveWidget)
+        b.addWidget(self.canvas_wv)
+        b = QtWidgets.QGridLayout(self.DelayCurveRfWidget)
+        b.addWidget(self.canvas_delayrf)
+        b = QtWidgets.QGridLayout(self.WaveCurveRfWidget)
+        b.addWidget(self.canvas_wvrf)
 
-        self.lineEdit_2.setText(str(lcfg.config["apps"][app_name]["AveragingTime"]))
+
+        # self.lineEdit_2.setText(str(lcfg.config["apps"][app_name]["AveragingTime"]))
 
         self.lineEdit_delay.setReadOnly(True)
         self.lineEdit_wv.setReadOnly(True)
 
-        @lcfg.update_config
-        def __set_averaging_time():
-            lcfg.config["apps"][app_name]["AveragingTime"] = float(self.lineEdit_2.text())
-            lstat.expmsg("Averaging time set to {at:.3f} s".format(at=lcfg.config["apps"][app_name]["AveragingTime"]))
+        # @lcfg.update_config
+        # def __set_averaging_time():
+        #     lcfg.config["apps"][app_name]["AveragingTime"] = float(self.lineEdit_2.text())
+        #     lstat.expmsg("Averaging time set to {at:.3f} s".format(at=lcfg.config["apps"][app_name]["AveragingTime"]))
 
-        self.lineEdit_2.editingFinished.connect(__set_averaging_time)
+        # self.lineEdit_2.editingFinished.connect(__set_averaging_time)
 
         @self.linear_stage.scan_range
         @self.tp_dynamic.scan_range
@@ -147,7 +150,7 @@ class STMBoxcarExperiment(QMainWindow, Ui_STMBoxcarExperiment):
                 return
             lstat.expmsg("Retriving signal from sensor...")
             time.sleep(0.2)
-            value = self.boxcar.get_value(averaging_time=lcfg.config["apps"][app_name]["AveragingTime"])
+            value = self.boxcar.get_value()
             sig = value[0]
             ref = value[1]
             lstat.expmsg("Adding latest signal to dataset...")

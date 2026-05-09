@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1901</width>
+    <width>1891</width>
     <height>1237</height>
    </rect>
   </property>
@@ -20,29 +20,13 @@
    <string>TR-STM Single Point</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="StageWidget" native="true">
-    <property name="geometry">
-     <rect>
-      <x>9</x>
-      <y>9</y>
-      <width>553</width>
-      <height>392</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <bold>false</bold>
-     </font>
-    </property>
-   </widget>
    <widget class="QWidget" name="MessageWidget" native="true">
     <property name="geometry">
      <rect>
-      <x>572</x>
-      <y>70</y>
-      <width>551</width>
-      <height>331</height>
+      <x>770</x>
+      <y>60</y>
+      <width>591</width>
+      <height>341</height>
      </rect>
     </property>
     <property name="font">
@@ -71,8 +55,8 @@
    <widget class="QLineEdit" name="lineEdit">
     <property name="geometry">
      <rect>
-      <x>722</x>
-      <y>10</y>
+      <x>910</x>
+      <y>20</y>
       <width>241</width>
       <height>29</height>
      </rect>
@@ -94,8 +78,8 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>20</y>
+      <x>770</x>
+      <y>30</y>
       <width>151</width>
       <height>16</height>
      </rect>
@@ -113,8 +97,8 @@
    <widget class="QPushButton" name="pushButton_1">
     <property name="geometry">
      <rect>
-      <x>970</x>
-      <y>10</y>
+      <x>1160</x>
+      <y>20</y>
       <width>75</width>
       <height>28</height>
      </rect>
@@ -132,8 +116,8 @@
    <widget class="QPushButton" name="pushButton_2">
     <property name="geometry">
      <rect>
-      <x>1050</x>
-      <y>10</y>
+      <x>1240</x>
+      <y>20</y>
       <width>75</width>
       <height>28</height>
      </rect>
@@ -146,16 +130,6 @@
     </property>
     <property name="text">
      <string>Stop</string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="TOPASWidget" native="true">
-    <property name="geometry">
-     <rect>
-      <x>1130</x>
-      <y>10</y>
-      <width>751</width>
-      <height>391</height>
-     </rect>
     </property>
    </widget>
    <widget class="QWidget" name="WaveCurveWidget" native="true">
@@ -174,53 +148,11 @@
      </font>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>570</x>
-      <y>50</y>
-      <width>151</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Average time:</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="lineEdit_2">
-    <property name="geometry">
-     <rect>
-      <x>720</x>
-      <y>40</y>
-      <width>241</width>
-      <height>29</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="font">
-     <font>
-      <family>Consolas</family>
-      <pointsize>12</pointsize>
-      <bold>false</bold>
-     </font>
-    </property>
-   </widget>
    <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>13</x>
-      <y>409</y>
+      <x>770</x>
+      <y>410</y>
       <width>851</width>
       <height>31</height>
      </rect>
@@ -240,7 +172,14 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit_delayNum"/>
+      <widget class="QLineEdit" name="lineEdit_delayNum">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QLabel" name="label_Delay">
@@ -323,6 +262,94 @@
       <bold>false</bold>
      </font>
     </property>
+   </widget>
+   <widget class="QTabWidget" name="SettingsWidget">
+    <property name="geometry">
+     <rect>
+      <x>13</x>
+      <y>6</y>
+      <width>750</width>
+      <height>441</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="StageTab">
+     <attribute name="title">
+      <string>Stage</string>
+     </attribute>
+     <widget class="QWidget" name="StageWidget" native="true">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>741</width>
+        <height>411</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+        <bold>false</bold>
+       </font>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="TOPASTab">
+     <attribute name="title">
+      <string>TOPAS</string>
+     </attribute>
+     <widget class="QWidget" name="TOPASWidget" native="true">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>741</width>
+        <height>411</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="DetectorTab">
+     <attribute name="title">
+      <string>Detector</string>
+     </attribute>
+     <widget class="QWidget" name="DetectorWidget" native="true">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>741</width>
+        <height>411</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </widget>
    </widget>
   </widget>
  </widget>

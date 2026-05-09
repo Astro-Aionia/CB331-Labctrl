@@ -5,6 +5,5 @@
     "Boxcar": "ziUHF",
     "PumpStatic": "T23232P",
     "PumpDynamic": "T23233P",
-    "SaveFileName": "DelayScan",
-    "AveragingTime": 0.1
+    "SaveFileName": "DelayScan"
 }
